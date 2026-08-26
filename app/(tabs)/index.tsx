@@ -256,15 +256,15 @@ export default function IndexScreen() {
           </Pressable>
 
           <View style={styles.sliderBlock}>
-            <Text style={styles.sliderTitle}>Adjust your read</Text>
+            <Text style={styles.sliderTitle}>How do you feel today?</Text>
             <VectorSlider
-              label="Pressure"
+              label="Pressure: how heavy does today feel?"
               value={tension}
               onChange={setTension}
               accent={tension >= 70 ? '#ff8a65' : tension <= 35 ? '#63e6a7' : '#8cd8ff'}
             />
             <VectorSlider
-              label="Stability"
+              label="Stability: how steady do you feel?"
               value={stability}
               onChange={setStability}
               accent={stability >= 75 ? '#63e6a7' : stability <= 45 ? '#ff8a65' : '#8cd8ff'}
