@@ -165,7 +165,7 @@ export default function IndexScreen() {
         <View style={styles.headerRow}>
           <View style={styles.headerTextWrap}>
             <Text style={styles.kicker}>{isPro ? 'Pro' : 'Free'}</Text>
-            <Text style={styles.title}>Flow check-in</Text>
+            <Text style={styles.title}>Brain check-in</Text>
             <Text style={styles.subtitle}>{statusText}</Text>
           </View>
           <Pressable style={styles.statusPill} onPress={() => void handleAutoSyncTrigger()}>
@@ -174,10 +174,22 @@ export default function IndexScreen() {
         </View>
 
         <View style={styles.heroPanel}>
+          <Pressable
+            style={styles.infoButton}
+            onPress={() =>
+              Alert.alert(
+                'What this means',
+                'Brain Pressure = how heavy your brain feels today.\n\nBrain Stability = how steady and settled your mind feels.\n\nHeavy drag = harder to focus, think clearly, or make decisions.\n\nSmooth flow = easier thinking, clearer focus, calmer energy.',
+              )
+            }
+          >
+            <Text style={styles.infoButtonText}>i</Text>
+          </Pressable>
+
           <View style={styles.metricGrid}>
             <View style={[styles.metricCell, { borderColor: pressureState.style.borderColor, backgroundColor: pressureState.style.backgroundColor }]}>
               <View style={styles.metricHeaderRow}>
-                <Text style={styles.metricLabel}>Pressure</Text>
+                <Text style={styles.metricLabel}>Brain Pressure</Text>
                 <Text style={[styles.metricZone, { color: pressureState.style.color }]}>{pressureState.label}</Text>
               </View>
               <Text style={styles.metricValue}>{tension}</Text>
@@ -211,7 +223,7 @@ export default function IndexScreen() {
             </View>
             <View style={[styles.metricCell, { borderColor: flowState.style.borderColor, backgroundColor: flowState.style.backgroundColor }]}>
               <View style={styles.metricHeaderRow}>
-                <Text style={styles.metricLabel}>Stability</Text>
+                <Text style={styles.metricLabel}>Brain Stability</Text>
                 <Text style={[styles.metricZone, { color: flowState.style.color }]}>{flowState.label}</Text>
               </View>
               <Text style={styles.metricValue}>{stability}</Text>
@@ -350,6 +362,25 @@ const styles = StyleSheet.create({
     borderColor: '#1c2b42',
     padding: 18,
     marginBottom: 18,
+    position: 'relative',
+  },
+  infoButton: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.16)',
+  },
+  infoButtonText: {
+    color: '#edf5ff',
+    fontSize: 14,
+    fontWeight: '700',
   },
   insightBanner: {
     borderRadius: 16,
