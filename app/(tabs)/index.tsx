@@ -172,6 +172,33 @@ export default function IndexScreen() {
                 <Text style={[styles.metricZone, { color: pressureState.style.color }]}>{pressureState.label}</Text>
               </View>
               <Text style={styles.metricValue}>{tension}</Text>
+              <View style={styles.meterRow}>
+                <Text style={[styles.meterText, { color: pressureState.style.color }]}>Low</Text>
+                <View style={styles.meterTrack}>
+                  <View
+                    style={[
+                      styles.meterFill,
+                      {
+                        width: `${Math.min(Math.max((tension / 100) * 100, 8), 92)}%`,
+                        backgroundColor: tension >= 70 ? '#ff8a65' : tension <= 35 ? '#63e6a7' : '#8cd8ff',
+                      },
+                    ]}
+                  />
+                  <View
+                    style={[
+                      styles.meterMarker,
+                      {
+                        left: `${Math.min(Math.max((tension / 100) * 100, 6), 94)}%`,
+                        backgroundColor: tension >= 70 ? '#ff8a65' : tension <= 35 ? '#63e6a7' : '#8cd8ff',
+                      },
+                    ]}
+                  />
+                </View>
+                <Text style={[styles.meterText, { color: pressureState.style.color }]}>High</Text>
+              </View>
+              <Text style={[styles.metricSummary, { color: pressureState.style.color }]}>
+                {tension >= 70 ? 'Too high' : tension <= 35 ? 'Good' : 'Watch'}
+              </Text>
             </View>
             <View style={[styles.metricCell, { borderColor: flowState.style.borderColor, backgroundColor: flowState.style.backgroundColor }]}>
               <View style={styles.metricHeaderRow}>
@@ -179,6 +206,33 @@ export default function IndexScreen() {
                 <Text style={[styles.metricZone, { color: flowState.style.color }]}>{flowState.label}</Text>
               </View>
               <Text style={styles.metricValue}>{stability}</Text>
+              <View style={styles.meterRow}>
+                <Text style={[styles.meterText, { color: flowState.style.color }]}>Low</Text>
+                <View style={styles.meterTrack}>
+                  <View
+                    style={[
+                      styles.meterFill,
+                      {
+                        width: `${Math.min(Math.max((stability / 100) * 100, 8), 92)}%`,
+                        backgroundColor: stability >= 75 ? '#63e6a7' : stability <= 45 ? '#ff8a65' : '#8cd8ff',
+                      },
+                    ]}
+                  />
+                  <View
+                    style={[
+                      styles.meterMarker,
+                      {
+                        left: `${Math.min(Math.max((stability / 100) * 100, 6), 94)}%`,
+                        backgroundColor: stability >= 75 ? '#63e6a7' : stability <= 45 ? '#ff8a65' : '#8cd8ff',
+                      },
+                    ]}
+                  />
+                </View>
+                <Text style={[styles.meterText, { color: flowState.style.color }]}>High</Text>
+              </View>
+              <Text style={[styles.metricSummary, { color: flowState.style.color }]}>
+                {stability >= 75 ? 'Good' : stability <= 45 ? 'Too low' : 'Watch'}
+              </Text>
             </View>
           </View>
 
@@ -363,6 +417,52 @@ const styles = StyleSheet.create({
     fontSize: 34,
     fontWeight: '700',
     lineHeight: 38,
+  },
+  meterRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 12,
+  },
+  meterTrack: {
+    flex: 1,
+    height: 10,
+    borderRadius: 999,
+    backgroundColor: 'rgba(255,255,255,0.10)',
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  meterFill: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    borderRadius: 999,
+  },
+  meterMarker: {
+    position: 'absolute',
+    top: -4,
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    borderWidth: 2,
+    borderColor: '#07111d',
+    transform: [{ translateX: -9 }],
+  },
+  meterText: {
+    fontSize: 10,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
+    fontWeight: '700',
+    minWidth: 28,
+    textAlign: 'center',
+  },
+  metricSummary: {
+    fontSize: 11,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
+    fontWeight: '800',
+    marginTop: 10,
   },
   formCard: {
     backgroundColor: '#0d1729',
