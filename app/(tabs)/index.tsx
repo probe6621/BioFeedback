@@ -23,7 +23,7 @@ export default function IndexScreen() {
   const [stability, setStability] = useState(defaultStability);
   const [history, setHistory] = useState<DailyCheckIn[]>([]);
   const [showCard, setShowCard] = useState(false);
-  const [statusText, setStatusText] = useState('Atmospheric pressure stable — low friction flow');
+  const [statusText, setStatusText] = useState('Running local ambient baseline (Tap to sync GPS)');
   const [isCalibrating, setIsCalibrating] = useState(true);
   const [isPro, setProState] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
@@ -44,7 +44,7 @@ export default function IndexScreen() {
           const latest = entries[0];
           setTension(latest.tension);
           setStability(latest.stability);
-          setStatusText('Restored recent calibration from local cache');
+          setStatusText('Using your last local check-in as a starting point');
         }
 
         setHistory(entries);
@@ -58,7 +58,12 @@ export default function IndexScreen() {
 
         setTension(nextValues.tension);
         setStability(nextValues.stability);
-        setStatusText(nextValues.statusText);
+        setStatusText(
+          nextValues.statusText
+            .replace('Location permission unavailable — using fallback field calibration', 'Running local ambient baseline (Tap to sync GPS)')
+            .replace('Connection drift detected — fallback field calibration applied', 'Running local ambient baseline (Tap to sync GPS)')
+            .replace('Offline calibration active — using ambient fallback estimate', 'Running local ambient baseline (Tap to sync GPS)'),
+        );
       }
 
       setIsCalibrating(false);
@@ -82,7 +87,12 @@ export default function IndexScreen() {
 
     setTension(nextValues.tension);
     setStability(nextValues.stability);
-    setStatusText(nextValues.statusText);
+    setStatusText(
+      nextValues.statusText
+        .replace('Location permission unavailable — using fallback field calibration', 'Running local ambient baseline (Tap to sync GPS)')
+        .replace('Connection drift detected — fallback field calibration applied', 'Running local ambient baseline (Tap to sync GPS)')
+        .replace('Offline calibration active — using ambient fallback estimate', 'Running local ambient baseline (Tap to sync GPS)'),
+    );
     setIsCalibrating(false);
   };
 
@@ -156,12 +166,13 @@ export default function IndexScreen() {
               <Text style={styles.metricValue}>{stability}</Text>
             </View>
           </View>
+
+          <View style={styles.insightBanner}>
+            <Text style={styles.insightText}>{buildInsightText(tension, stability)}</Text>
+          </View>
         </View>
 
         <View style={styles.formCard}>
-          <VectorSlider label="Environmental & Internal Pressure" value={tension} onChange={setTension} accent="#7af7d1" />
-          <VectorSlider label="Coherence & Baseline Flow" value={stability} onChange={setStability} accent="#8cd8ff" />
-
           <Pressable style={styles.primaryButton} onPress={saveLog}>
             <Text style={styles.primaryButtonText}>Log Daily Check-In</Text>
           </Pressable>
@@ -169,6 +180,12 @@ export default function IndexScreen() {
           <Pressable style={styles.secondaryButton} onPress={() => setShowCard(true)}>
             <Text style={styles.secondaryButtonText}>Generate Tension Card</Text>
           </Pressable>
+
+          <View style={styles.sliderBlock}>
+            <Text style={styles.sliderTitle}>Adjust your read</Text>
+            <VectorSlider label="Environmental & Internal Pressure" value={tension} onChange={setTension} accent="#7af7d1" />
+            <VectorSlider label="Coherence & Baseline Flow" value={stability} onChange={setStability} accent="#8cd8ff" />
+          </View>
         </View>
 
         {showCard ? (
@@ -254,6 +271,19 @@ const styles = StyleSheet.create({
     padding: 18,
     marginBottom: 18,
   },
+  insightBanner: {
+    backgroundColor: '#101d2d',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#243752',
+    padding: 14,
+    marginTop: 14,
+  },
+  insightText: {
+    color: '#dfeaf7',
+    fontSize: 13,
+    lineHeight: 20,
+  },
   vectorPanel: {
     height: 180,
     borderRadius: 22,
@@ -322,6 +352,17 @@ const styles = StyleSheet.create({
     borderColor: '#1b2d44',
     padding: 18,
     marginBottom: 18,
+  },
+  sliderBlock: {
+    marginTop: 18,
+  },
+  sliderTitle: {
+    color: '#dfeaf7',
+    marginBottom: 12,
+    fontSize: 13,
+    fontWeight: '700',
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
   },
   primaryButton: {
     borderRadius: 16,
@@ -440,3 +481,19 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
+
+function buildInsightText(tension: number, stability: number) {
+  if (tension >= 70 && stability <= 55) {
+    return '⚠️ Moderate friction: Environmental load is elevated. Expect a heavier cognitive drag today—pace your execution.';
+  }
+
+  if (tension >= 80 || stability <= 45) {
+    return '⚠️ High load: your system is running under pressure. Reduce task stacking and protect your focus windows.';
+  }
+
+  if (tension <= 45 && stability >= 70) {
+    return '✅ Smooth flow: your environment feels low-friction and your baseline is stable. Lean into momentum.';
+  }
+
+  return '⚠️ Some drag is present, but not severe. Keep your decisions simple and your pace deliberate.';
+}
