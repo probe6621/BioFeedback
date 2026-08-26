@@ -185,7 +185,7 @@ export default function IndexScreen() {
             onPress={() =>
               Alert.alert(
                 'What this means',
-                'Brain Pressure = how heavy your brain feels today.\n\nBrain Stability = how steady and settled your mind feels.\n\nHeavy drag = harder to focus, think clearly, or make decisions.\n\nSmooth flow = easier thinking, clearer focus, calmer energy.',
+                'Brain = the thinking system.\nMind = the feeling and steadiness underneath it.\n\nBrain Pressure = how heavy your brain feels today.\n\nBrain Stability = how steady and settled your mind feels.\n\nHeavy drag = harder to focus, think clearly, or make decisions.\n\nSmooth flow = easier thinking, clearer focus, calmer energy.',
               )
             }
           >
