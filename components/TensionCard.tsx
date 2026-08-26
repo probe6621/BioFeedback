@@ -8,10 +8,8 @@ type TensionCardProps = {
 };
 
 export function TensionCard({ tension, stability, dateLabel }: TensionCardProps) {
-  const vectorAngle = (stability - 50) * 1.8;
-
   const pressureColor = tension >= 70 ? '#ff8a65' : tension <= 35 ? '#63e6a7' : '#8cd8ff';
-  const flowColor = stability >= 75 ? '#63e6a7' : stability <= 45 ? '#ff8a65' : '#8cd8ff';
+  const stabilityColor = stability >= 75 ? '#63e6a7' : stability <= 45 ? '#ff8a65' : '#8cd8ff';
 
   return (
     <View style={styles.container}>
@@ -23,19 +21,9 @@ export function TensionCard({ tension, stability, dateLabel }: TensionCardProps)
       <Text style={styles.title}>Pressure</Text>
       <Text style={[styles.value, { color: pressureColor }]}>{tension}</Text>
 
-      <View style={styles.vectorBox}>
-        <View
-          style={[
-            styles.centerDot,
-            { transform: [{ rotate: `${vectorAngle}deg` }, { translateY: -10 }], backgroundColor: flowColor },
-          ]}
-        />
-        <View style={[styles.vectorPath, { transform: [{ rotate: `${vectorAngle}deg` }], backgroundColor: flowColor }]} />
-      </View>
-
       <View style={styles.footerRow}>
-        <Text style={styles.statLabel}>Flow</Text>
-        <Text style={[styles.statValue, { color: flowColor }]}>{stability}</Text>
+        <Text style={styles.statLabel}>Stability</Text>
+        <Text style={[styles.statValue, { color: stabilityColor }]}>{stability}</Text>
       </View>
     </View>
   );
@@ -80,33 +68,6 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#7af7d1',
     marginBottom: 16,
-  },
-  vectorBox: {
-    height: 120,
-    borderRadius: 20,
-    backgroundColor: '#0b1322',
-    marginBottom: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-  },
-  centerDot: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-    backgroundColor: '#7af7d1',
-    position: 'absolute',
-  },
-  vectorPath: {
-    width: 140,
-    height: 4,
-    borderRadius: 4,
-    backgroundColor: '#8cd8ff',
-    position: 'absolute',
-    left: '50%',
-    top: '50%',
-    marginLeft: -70,
-    marginTop: -2,
   },
   footerRow: {
     flexDirection: 'row',

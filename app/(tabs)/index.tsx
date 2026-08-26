@@ -103,8 +103,6 @@ export default function IndexScreen() {
     await handleAutoSyncTrigger();
   };
 
-  const vectorAngle = useMemo(() => `${(stability - 50) * 2.1}deg`, [stability]);
-
   const pressureState = useMemo(() => {
     if (tension >= 70) {
       return { label: 'Heavy', style: { backgroundColor: '#2c1723', borderColor: '#ff8a65', color: '#ffd6c8' } };
@@ -167,18 +165,6 @@ export default function IndexScreen() {
         </View>
 
         <View style={styles.heroPanel}>
-          <View style={styles.vectorPanel}>
-            <View style={styles.vectorGuide}>
-              <View
-                style={[
-                  styles.vectorBeam,
-                  { transform: [{ rotate: vectorAngle }] },
-                ]}
-              />
-              <View style={styles.vectorNode} />
-            </View>
-          </View>
-
           <View style={styles.metricGrid}>
             <View style={[styles.metricCell, { borderColor: pressureState.style.borderColor, backgroundColor: pressureState.style.backgroundColor }]}>
               <Text style={styles.metricLabel}>Pressure</Text>
@@ -186,7 +172,7 @@ export default function IndexScreen() {
               <Text style={[styles.metricTarget, { color: pressureState.style.color }]}>{pressureState.label} zone</Text>
             </View>
             <View style={[styles.metricCell, { borderColor: flowState.style.borderColor, backgroundColor: flowState.style.backgroundColor }]}>
-              <Text style={styles.metricLabel}>Flow</Text>
+              <Text style={styles.metricLabel}>Stability</Text>
               <Text style={styles.metricValue}>{stability}</Text>
               <Text style={[styles.metricTarget, { color: flowState.style.color }]}>{flowState.label} zone</Text>
             </View>
@@ -225,7 +211,7 @@ export default function IndexScreen() {
               accent={tension >= 70 ? '#ff8a65' : tension <= 35 ? '#63e6a7' : '#8cd8ff'}
             />
             <VectorSlider
-              label="Flow"
+              label="Stability"
               value={stability}
               onChange={setStability}
               accent={stability >= 75 ? '#63e6a7' : stability <= 45 ? '#ff8a65' : '#8cd8ff'}
@@ -341,42 +327,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 20,
     marginTop: 6,
-  },
-  vectorPanel: {
-    height: 180,
-    borderRadius: 22,
-    backgroundColor: '#0a1320',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 18,
-  },
-  vectorGuide: {
-    width: 220,
-    height: 220,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 110,
-    borderWidth: 1,
-    borderColor: '#20314d',
-    position: 'relative',
-  },
-  vectorBeam: {
-    width: 160,
-    height: 3,
-    backgroundColor: '#8cd8ff',
-    borderRadius: 999,
-    position: 'absolute',
-  },
-  vectorNode: {
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    backgroundColor: '#7af7d1',
-    position: 'absolute',
-    shadowColor: '#7af7d1',
-    shadowOpacity: 0.8,
-    shadowRadius: 18,
-    shadowOffset: { width: 0, height: 0 },
   },
   metricGrid: {
     flexDirection: 'row',
