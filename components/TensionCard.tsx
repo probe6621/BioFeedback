@@ -10,6 +10,9 @@ type TensionCardProps = {
 export function TensionCard({ tension, stability, dateLabel }: TensionCardProps) {
   const vectorAngle = (stability - 50) * 1.8;
 
+  const pressureColor = tension >= 70 ? '#ff8a65' : tension <= 35 ? '#63e6a7' : '#8cd8ff';
+  const flowColor = stability >= 75 ? '#63e6a7' : stability <= 45 ? '#ff8a65' : '#8cd8ff';
+
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
@@ -17,22 +20,22 @@ export function TensionCard({ tension, stability, dateLabel }: TensionCardProps)
         <Text style={styles.date}>{dateLabel}</Text>
       </View>
 
-      <Text style={styles.title}>Environmental & Internal Pressure</Text>
-      <Text style={styles.value}>{tension}</Text>
+      <Text style={styles.title}>Pressure</Text>
+      <Text style={[styles.value, { color: pressureColor }]}>{tension}</Text>
 
       <View style={styles.vectorBox}>
         <View
           style={[
             styles.centerDot,
-            { transform: [{ rotate: `${vectorAngle}deg` }, { translateY: -10 }] },
+            { transform: [{ rotate: `${vectorAngle}deg` }, { translateY: -10 }], backgroundColor: flowColor },
           ]}
         />
-        <View style={[styles.vectorPath, { transform: [{ rotate: `${vectorAngle}deg` }] }]} />
+        <View style={[styles.vectorPath, { transform: [{ rotate: `${vectorAngle}deg` }], backgroundColor: flowColor }]} />
       </View>
 
       <View style={styles.footerRow}>
-        <Text style={styles.statLabel}>Coherence & Baseline Flow</Text>
-        <Text style={styles.statValue}>{stability}</Text>
+        <Text style={styles.statLabel}>Flow</Text>
+        <Text style={[styles.statValue, { color: flowColor }]}>{stability}</Text>
       </View>
     </View>
   );

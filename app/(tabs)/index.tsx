@@ -105,6 +105,29 @@ export default function IndexScreen() {
 
   const vectorAngle = useMemo(() => `${(stability - 50) * 2.1}deg`, [stability]);
 
+  const pressureState = useMemo(() => {
+    if (tension >= 70) {
+      return { label: 'Heavy', style: { backgroundColor: '#2c1723', borderColor: '#ff8a65', color: '#ffd6c8' } };
+    }
+    if (tension <= 35) {
+      return { label: 'Ideal', style: { backgroundColor: '#102b23', borderColor: '#63e6a7', color: '#d8ffe8' } };
+    }
+    return { label: 'Watch', style: { backgroundColor: '#1e2635', borderColor: '#f7b267', color: '#ffe8b7' } };
+  }, [tension]);
+
+  const flowState = useMemo(() => {
+    if (stability >= 75) {
+      return { label: 'Ideal', style: { backgroundColor: '#102b23', borderColor: '#63e6a7', color: '#d8ffe8' } };
+    }
+    if (stability <= 45) {
+      return { label: 'Heavy', style: { backgroundColor: '#2c1723', borderColor: '#ff8a65', color: '#ffd6c8' } };
+    }
+    return { label: 'Watch', style: { backgroundColor: '#1e2635', borderColor: '#f7b267', color: '#ffe8b7' } };
+  }, [stability]);
+
+  const isHeavyDrag = tension >= 70 || stability <= 45;
+  const isIdealFlow = tension <= 35 && stability >= 75;
+
   const saveLog = async () => {
     const today = new Date().toISOString().slice(0, 10);
     const nextHistory = await saveDailyCheckIn({ date: today, tension, stability });
@@ -135,7 +158,7 @@ export default function IndexScreen() {
         <View style={styles.headerRow}>
           <View>
             <Text style={styles.kicker}>{isPro ? 'Pro' : 'Free'}</Text>
-            <Text style={styles.title}>Daily Environmental Check-In</Text>
+            <Text style={styles.title}>Daily Flow Check-In</Text>
             <Text style={styles.subtitle}>{statusText}</Text>
           </View>
           <Pressable style={styles.statusPill} onPress={() => void handleAutoSyncTrigger()}>
@@ -157,22 +180,30 @@ export default function IndexScreen() {
           </View>
 
           <View style={styles.metricGrid}>
-            <View style={styles.metricCell}>
-              <Text style={styles.metricLabel}>Environmental & Internal Pressure</Text>
+            <View style={[styles.metricCell, { borderColor: pressureState.style.borderColor, backgroundColor: pressureState.style.backgroundColor }]}>
+              <Text style={styles.metricLabel}>Pressure</Text>
               <Text style={styles.metricValue}>{tension}</Text>
-              <Text style={styles.metricTarget}>Target: Low (20–45)</Text>
+              <Text style={[styles.metricTarget, { color: pressureState.style.color }]}>{pressureState.label} zone</Text>
             </View>
-            <View style={styles.metricCell}>
-              <Text style={styles.metricLabel}>Coherence & Baseline Flow</Text>
+            <View style={[styles.metricCell, { borderColor: flowState.style.borderColor, backgroundColor: flowState.style.backgroundColor }]}>
+              <Text style={styles.metricLabel}>Flow</Text>
               <Text style={styles.metricValue}>{stability}</Text>
-              <Text style={styles.metricTarget}>Target: High (75–95)</Text>
+              <Text style={[styles.metricTarget, { color: flowState.style.color }]}>{flowState.label} zone</Text>
             </View>
           </View>
 
-          <View style={[styles.insightBanner, tension > 65 || stability < 65 ? styles.warningBanner : styles.successBanner]}>
-            <Text style={styles.statusLabel}>{tension > 65 || stability < 65 ? 'Status: High Environmental Friction' : 'Status: Low-Friction Flow State'}</Text>
-            <Text style={styles.insightText}>{tension > 65 || stability < 65 ? 'Why You Care: Your cognitive battery is leaking twice as fast today. Expect heavy brain fog and faster mental fatigue.' : 'Why You Care: Zero atmospheric drag. Your internal circuit is locked in.'}</Text>
-            <Text style={styles.insightText}>{tension > 65 || stability < 65 ? 'Action: Do not tackle complex deep work right now. Protect your focus blocks and keep decisions simple.' : 'Action: This is your green light. Lean hard into execution and tackle your hardest tasks now.'}</Text>
+          <View style={[styles.insightBanner, isHeavyDrag ? styles.warningBanner : styles.successBanner]}>
+            <Text style={styles.statusLabel}>{isHeavyDrag ? 'High Friction / Heavy Drag' : isIdealFlow ? 'Low Friction / Ideal Flow' : 'Balanced / Steady Load'}</Text>
+            <Text style={styles.insightText}>
+              {isHeavyDrag
+                ? 'The system is carrying too much drag. Expect slower thinking, more friction in decisions, and a quicker drop in focus.'
+                : 'The system is running clean. The environment is supporting focus instead of fighting it.'}
+            </Text>
+            <Text style={styles.insightText}>
+              {isHeavyDrag
+                ? 'Action: keep the day light, reduce complexity, and save heavy thinking for a later window.'
+                : 'Action: lean into your hardest work now while the signal is clear and stable.'}
+            </Text>
           </View>
         </View>
 
@@ -187,8 +218,18 @@ export default function IndexScreen() {
 
           <View style={styles.sliderBlock}>
             <Text style={styles.sliderTitle}>Adjust your read</Text>
-            <VectorSlider label="Environmental & Internal Pressure" value={tension} onChange={setTension} accent="#7af7d1" />
-            <VectorSlider label="Coherence & Baseline Flow" value={stability} onChange={setStability} accent="#8cd8ff" />
+            <VectorSlider
+              label="Pressure"
+              value={tension}
+              onChange={setTension}
+              accent={tension >= 70 ? '#ff8a65' : tension <= 35 ? '#63e6a7' : '#8cd8ff'}
+            />
+            <VectorSlider
+              label="Flow"
+              value={stability}
+              onChange={setStability}
+              accent={stability >= 75 ? '#63e6a7' : stability <= 45 ? '#ff8a65' : '#8cd8ff'}
+            />
           </View>
         </View>
 
