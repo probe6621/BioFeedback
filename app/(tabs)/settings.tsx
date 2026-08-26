@@ -1,9 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { getIsPro, setIsPro } from '../../src/services/subscription';
 
 export default function SettingsScreen() {
   const [proEnabled, setProEnabled] = useState(false);
+
+  useEffect(() => {
+    void getIsPro().then(setProEnabled);
+  }, []);
+
+  const handleToggle = async (nextValue: boolean) => {
+    setProEnabled(nextValue);
+    await setIsPro(nextValue);
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -14,7 +24,7 @@ export default function SettingsScreen() {
           <Text style={styles.cardTitle}>Pro upgrade</Text>
           <View style={styles.row}>
             <Text style={styles.rowText}>Premium telemetry vault · $2/mo</Text>
-            <Switch value={proEnabled} onValueChange={setProEnabled} />
+            <Switch value={proEnabled} onValueChange={handleToggle} />
           </View>
         </View>
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   Alert,
+  Modal,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -11,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { TensionCard } from '../../components/TensionCard';
 import { VectorSlider } from '../../components/VectorSlider';
 import { runAutoSync } from '../../src/services/autoSync';
+import { getIsPro, setIsPro } from '../../src/services/subscription';
 import { DailyCheckIn, getRecentCheckIns, saveDailyCheckIn } from '../../utils/storage';
 
 const defaultTension = 72;
@@ -23,11 +25,17 @@ export default function IndexScreen() {
   const [showCard, setShowCard] = useState(false);
   const [statusText, setStatusText] = useState('Atmospheric pressure stable — low friction flow');
   const [isCalibrating, setIsCalibrating] = useState(true);
+  const [isPro, setProState] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   useEffect(() => {
     let active = true;
 
     const hydrate = async () => {
+      const proState = await getIsPro();
+      if (!active) return;
+      setProState(proState);
+
       try {
         const entries = await getRecentCheckIns();
         if (!active) return;
@@ -44,12 +52,15 @@ export default function IndexScreen() {
         setHistory([]);
       }
 
-      const nextValues = await runAutoSync();
-      if (!active) return;
+      if (proState) {
+        const nextValues = await runAutoSync();
+        if (!active) return;
 
-      setTension(nextValues.tension);
-      setStability(nextValues.stability);
-      setStatusText(nextValues.statusText);
+        setTension(nextValues.tension);
+        setStability(nextValues.stability);
+        setStatusText(nextValues.statusText);
+      }
+
       setIsCalibrating(false);
     };
 
@@ -59,6 +70,28 @@ export default function IndexScreen() {
       active = false;
     };
   }, []);
+
+  const handleAutoSyncTrigger = async () => {
+    if (!isPro) {
+      setShowUpgradeModal(true);
+      return;
+    }
+
+    setIsCalibrating(true);
+    const nextValues = await runAutoSync();
+
+    setTension(nextValues.tension);
+    setStability(nextValues.stability);
+    setStatusText(nextValues.statusText);
+    setIsCalibrating(false);
+  };
+
+  const handleUpgradeToPro = async () => {
+    const enabled = await setIsPro(true);
+    setProState(enabled);
+    setShowUpgradeModal(false);
+    await handleAutoSyncTrigger();
+  };
 
   const vectorAngle = useMemo(() => `${(stability - 50) * 2.1}deg`, [stability]);
 
@@ -72,16 +105,32 @@ export default function IndexScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <Modal visible={showUpgradeModal} transparent animationType="fade" onRequestClose={() => setShowUpgradeModal(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalKicker}>Pro unlock</Text>
+            <Text style={styles.modalTitle}>Unlock Real-Time Environmental Auto-Sync</Text>
+            <Text style={styles.modalBody}>Let GPS & barometric pressure calibrate your flow automatically for just $2/month.</Text>
+            <Pressable style={styles.modalButton} onPress={handleUpgradeToPro}>
+              <Text style={styles.modalButtonText}>Upgrade to Pro ($2)</Text>
+            </Pressable>
+            <Pressable style={styles.modalSecondary} onPress={() => setShowUpgradeModal(false)}>
+              <Text style={styles.modalSecondaryText}>Maybe later</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.headerRow}>
           <View>
-            <Text style={styles.kicker}>Auto-sync</Text>
+            <Text style={styles.kicker}>{isPro ? 'Pro' : 'Free'}</Text>
             <Text style={styles.title}>Daily Environmental Check-In</Text>
             <Text style={styles.subtitle}>{statusText}</Text>
           </View>
-          <View style={styles.statusPill}>
-            <Text style={styles.pillText}>{isCalibrating ? 'Calibrating...' : 'Live'}</Text>
-          </View>
+          <Pressable style={styles.statusPill} onPress={() => void handleAutoSyncTrigger()}>
+            <Text style={styles.pillText}>{isCalibrating ? 'Calibrating...' : isPro ? 'Live' : 'Locked'}</Text>
+          </Pressable>
         </View>
 
         <View style={styles.heroPanel}>
@@ -329,6 +378,65 @@ const styles = StyleSheet.create({
   },
   historyValue: {
     color: '#f5fbff',
+    fontWeight: '600',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(4, 10, 18, 0.72)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  modalCard: {
+    width: '100%',
+    backgroundColor: '#0d1729',
+    borderRadius: 28,
+    borderWidth: 1,
+    borderColor: '#223b5c',
+    padding: 22,
+  },
+  modalKicker: {
+    color: '#7af7d1',
+    fontSize: 11,
+    letterSpacing: 1.8,
+    textTransform: 'uppercase',
+    fontWeight: '700',
+    marginBottom: 10,
+  },
+  modalTitle: {
+    color: '#f5fbff',
+    fontSize: 28,
+    fontWeight: '800',
+    marginBottom: 10,
+  },
+  modalBody: {
+    color: '#dfeaf7',
+    fontSize: 16,
+    lineHeight: 24,
+    marginBottom: 18,
+  },
+  modalButton: {
+    backgroundColor: '#7af7d1',
+    borderRadius: 16,
+    paddingVertical: 15,
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  modalButtonText: {
+    color: '#05151c',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  modalSecondary: {
+    borderWidth: 1,
+    borderColor: '#324d6d',
+    borderRadius: 16,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  modalSecondaryText: {
+    color: '#dfeaf7',
+    fontSize: 15,
     fontWeight: '600',
   },
 });
