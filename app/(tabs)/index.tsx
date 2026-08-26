@@ -124,6 +124,12 @@ export default function IndexScreen() {
 
   const isHeavyDrag = tension >= 70 || stability <= 45;
   const isIdealFlow = tension <= 35 && stability >= 75;
+  const combinedScore = Math.max(0, Math.min(100, Math.round(( (100 - tension) * 0.6 ) + (stability * 0.4))));
+  const combinedState = useMemo(() => {
+    if (combinedScore >= 80) return { label: 'Smooth', color: '#63e6a7', bg: '#102b23' };
+    if (combinedScore >= 60) return { label: 'Steady', color: '#8cd8ff', bg: '#12263d' };
+    return { label: 'Heavy drag', color: '#ff8a65', bg: '#2c1723' };
+  }, [combinedScore]);
 
   const saveLog = async () => {
     const today = new Date().toISOString().slice(0, 10);
@@ -185,6 +191,14 @@ export default function IndexScreen() {
           >
             <Text style={styles.infoButtonText}>i</Text>
           </Pressable>
+
+          <View style={[styles.combinedScoreCard, { backgroundColor: combinedState.bg, borderColor: combinedState.color }]}>
+            <Text style={styles.combinedLabel}>Brain Read</Text>
+            <View style={styles.combinedRow}>
+              <Text style={styles.combinedValue}>{combinedScore}</Text>
+              <Text style={[styles.combinedState, { color: combinedState.color }]}>{combinedState.label}</Text>
+            </View>
+          </View>
 
           <View style={styles.metricGrid}>
             <View style={[styles.metricCell, { borderColor: pressureState.style.borderColor, backgroundColor: pressureState.style.backgroundColor }]}>
@@ -407,6 +421,36 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 20,
     marginTop: 6,
+  },
+  combinedScoreCard: {
+    borderRadius: 18,
+    borderWidth: 1,
+    padding: 14,
+    marginBottom: 12,
+  },
+  combinedLabel: {
+    color: '#dfeaf7',
+    fontSize: 11,
+    letterSpacing: 1.4,
+    textTransform: 'uppercase',
+    marginBottom: 8,
+  },
+  combinedRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+  },
+  combinedValue: {
+    color: '#f5fbff',
+    fontSize: 42,
+    fontWeight: '800',
+    lineHeight: 42,
+  },
+  combinedState: {
+    fontSize: 12,
+    letterSpacing: 1.2,
+    textTransform: 'uppercase',
+    fontWeight: '800',
   },
   metricGrid: {
     flexDirection: 'column',
