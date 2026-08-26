@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TensionCard } from '../../components/TensionCard';
 import { VectorSlider } from '../../components/VectorSlider';
+import { runAutoSync } from '../../src/services/autoSync';
 import { DailyCheckIn, getRecentCheckIns, saveDailyCheckIn } from '../../utils/storage';
 
 const defaultTension = 72;
@@ -20,12 +21,24 @@ export default function IndexScreen() {
   const [stability, setStability] = useState(defaultStability);
   const [history, setHistory] = useState<DailyCheckIn[]>([]);
   const [showCard, setShowCard] = useState(false);
+  const [statusText, setStatusText] = useState('Atmospheric pressure stable — low friction flow');
+  const [syncState, setSyncState] = useState<'idle' | 'syncing' | 'done'>('idle');
 
   useEffect(() => {
     getRecentCheckIns().then(setHistory);
+    void handleAutoSync();
   }, []);
 
   const vectorAngle = useMemo(() => `${(stability - 50) * 2.1}deg`, [stability]);
+
+  const handleAutoSync = async () => {
+    setSyncState('syncing');
+    const nextValues = await runAutoSync();
+    setTension(nextValues.tension);
+    setStability(nextValues.stability);
+    setStatusText(nextValues.statusText);
+    setSyncState('done');
+  };
 
   const saveLog = async () => {
     const today = new Date().toISOString().slice(0, 10);
@@ -40,11 +53,12 @@ export default function IndexScreen() {
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.headerRow}>
           <View>
-            <Text style={styles.kicker}>Phase 1</Text>
-            <Text style={styles.title}>Daily Vector Check-In</Text>
+            <Text style={styles.kicker}>Auto-sync</Text>
+            <Text style={styles.title}>Daily Environmental Check-In</Text>
+            <Text style={styles.subtitle}>{statusText}</Text>
           </View>
-          <Pressable style={styles.pill} onPress={() => setShowCard((value) => !value)}>
-            <Text style={styles.pillText}>{showCard ? 'Hide card' : 'Card'}</Text>
+          <Pressable style={styles.pill} onPress={() => void handleAutoSync()} disabled={syncState === 'syncing'}>
+            <Text style={styles.pillText}>{syncState === 'syncing' ? 'Syncing...' : 'Auto-Sync'}</Text>
           </Pressable>
         </View>
 
@@ -63,19 +77,19 @@ export default function IndexScreen() {
 
           <View style={styles.metricGrid}>
             <View style={styles.metricCell}>
-              <Text style={styles.metricLabel}>Current Tension</Text>
+              <Text style={styles.metricLabel}>Environmental & Internal Pressure</Text>
               <Text style={styles.metricValue}>{tension}</Text>
             </View>
             <View style={styles.metricCell}>
-              <Text style={styles.metricLabel}>Vector Stability</Text>
+              <Text style={styles.metricLabel}>Coherence & Baseline Flow</Text>
               <Text style={styles.metricValue}>{stability}</Text>
             </View>
           </View>
         </View>
 
         <View style={styles.formCard}>
-          <VectorSlider label="Bio-Charge Tension" value={tension} onChange={setTension} accent="#7af7d1" />
-          <VectorSlider label="Vector Stability" value={stability} onChange={setStability} accent="#8cd8ff" />
+          <VectorSlider label="Environmental & Internal Pressure" value={tension} onChange={setTension} accent="#7af7d1" />
+          <VectorSlider label="Coherence & Baseline Flow" value={stability} onChange={setStability} accent="#8cd8ff" />
 
           <Pressable style={styles.primaryButton} onPress={saveLog}>
             <Text style={styles.primaryButtonText}>Log Daily Check-In</Text>
@@ -125,7 +139,7 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginBottom: 16,
   },
   kicker: {
@@ -139,14 +153,23 @@ const styles = StyleSheet.create({
     color: '#f2f7ff',
     fontSize: 28,
     fontWeight: '800',
+    maxWidth: 220,
+  },
+  subtitle: {
+    color: '#9bb0c8',
+    fontSize: 12,
+    marginTop: 10,
+    maxWidth: 230,
+    lineHeight: 18,
   },
   pill: {
     backgroundColor: '#101d2d',
-    paddingHorizontal: 14,
-    paddingVertical: 9,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
     borderRadius: 18,
     borderWidth: 1,
     borderColor: '#243752',
+    marginTop: 12,
   },
   pillText: {
     color: '#dfeaf7',

@@ -17,7 +17,7 @@ export function TensionCard({ tension, stability, dateLabel }: TensionCardProps)
         <Text style={styles.date}>{dateLabel}</Text>
       </View>
 
-      <Text style={styles.title}>Bio-Charge Tension</Text>
+      <Text style={styles.title}>Environmental & Internal Pressure</Text>
       <Text style={styles.value}>{tension}</Text>
 
       <View style={styles.vectorBox}>
@@ -31,7 +31,7 @@ export function TensionCard({ tension, stability, dateLabel }: TensionCardProps)
       </View>
 
       <View style={styles.footerRow}>
-        <Text style={styles.statLabel}>Vector Stability</Text>
+        <Text style={styles.statLabel}>Coherence & Baseline Flow</Text>
         <Text style={styles.statValue}>{stability}</Text>
       </View>
     </View>
