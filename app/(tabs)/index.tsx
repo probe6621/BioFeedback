@@ -203,7 +203,10 @@ export default function IndexScreen() {
           <View style={styles.metricGrid}>
             <View style={[styles.metricCell, { borderColor: pressureState.style.borderColor, backgroundColor: pressureState.style.backgroundColor }]}>
               <View style={styles.metricHeaderRow}>
-                <Text style={styles.metricLabel}>Brain Pressure</Text>
+                <View style={styles.metricLabelWrap}>
+                  <Text style={styles.metricLabel}>Brain Pressure</Text>
+                  <Text style={styles.metricHelper}>How heavy your brain feels</Text>
+                </View>
                 <Text style={[styles.metricZone, { color: pressureState.style.color }]}>{pressureState.label}</Text>
               </View>
               <Text style={styles.metricValue}>{tension}</Text>
@@ -237,7 +240,10 @@ export default function IndexScreen() {
             </View>
             <View style={[styles.metricCell, { borderColor: flowState.style.borderColor, backgroundColor: flowState.style.backgroundColor }]}>
               <View style={styles.metricHeaderRow}>
-                <Text style={styles.metricLabel}>Brain Stability</Text>
+                <View style={styles.metricLabelWrap}>
+                  <Text style={styles.metricLabel}>Brain Stability</Text>
+                  <Text style={styles.metricHelper}>How steady your mind feels</Text>
+                </View>
                 <Text style={[styles.metricZone, { color: flowState.style.color }]}>{flowState.label}</Text>
               </View>
               <Text style={styles.metricValue}>{stability}</Text>
@@ -465,14 +471,25 @@ const styles = StyleSheet.create({
   metricHeaderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginBottom: 10,
+    gap: 8,
+  },
+  metricLabelWrap: {
+    flex: 1,
   },
   metricLabel: {
     color: '#9bb0c8',
     fontSize: 12,
     letterSpacing: 0.7,
     textTransform: 'uppercase',
+  },
+  metricHelper: {
+    color: '#dfeaf7',
+    fontSize: 10,
+    opacity: 0.8,
+    marginTop: 4,
+    lineHeight: 14,
   },
   metricZone: {
     fontSize: 11,
