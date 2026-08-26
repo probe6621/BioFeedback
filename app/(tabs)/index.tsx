@@ -22,23 +22,45 @@ export default function IndexScreen() {
   const [history, setHistory] = useState<DailyCheckIn[]>([]);
   const [showCard, setShowCard] = useState(false);
   const [statusText, setStatusText] = useState('Atmospheric pressure stable — low friction flow');
-  const [syncState, setSyncState] = useState<'idle' | 'syncing' | 'done'>('idle');
+  const [isCalibrating, setIsCalibrating] = useState(true);
 
   useEffect(() => {
-    getRecentCheckIns().then(setHistory);
-    void handleAutoSync();
+    let active = true;
+
+    const hydrate = async () => {
+      try {
+        const entries = await getRecentCheckIns();
+        if (!active) return;
+
+        if (entries.length > 0) {
+          const latest = entries[0];
+          setTension(latest.tension);
+          setStability(latest.stability);
+          setStatusText('Restored recent calibration from local cache');
+        }
+
+        setHistory(entries);
+      } catch {
+        setHistory([]);
+      }
+
+      const nextValues = await runAutoSync();
+      if (!active) return;
+
+      setTension(nextValues.tension);
+      setStability(nextValues.stability);
+      setStatusText(nextValues.statusText);
+      setIsCalibrating(false);
+    };
+
+    void hydrate();
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   const vectorAngle = useMemo(() => `${(stability - 50) * 2.1}deg`, [stability]);
-
-  const handleAutoSync = async () => {
-    setSyncState('syncing');
-    const nextValues = await runAutoSync();
-    setTension(nextValues.tension);
-    setStability(nextValues.stability);
-    setStatusText(nextValues.statusText);
-    setSyncState('done');
-  };
 
   const saveLog = async () => {
     const today = new Date().toISOString().slice(0, 10);
@@ -57,9 +79,9 @@ export default function IndexScreen() {
             <Text style={styles.title}>Daily Environmental Check-In</Text>
             <Text style={styles.subtitle}>{statusText}</Text>
           </View>
-          <Pressable style={styles.pill} onPress={() => void handleAutoSync()} disabled={syncState === 'syncing'}>
-            <Text style={styles.pillText}>{syncState === 'syncing' ? 'Syncing...' : 'Auto-Sync'}</Text>
-          </Pressable>
+          <View style={styles.statusPill}>
+            <Text style={styles.pillText}>{isCalibrating ? 'Calibrating...' : 'Live'}</Text>
+          </View>
         </View>
 
         <View style={styles.heroPanel}>
@@ -162,7 +184,7 @@ const styles = StyleSheet.create({
     maxWidth: 230,
     lineHeight: 18,
   },
-  pill: {
+  statusPill: {
     backgroundColor: '#101d2d',
     paddingHorizontal: 12,
     paddingVertical: 10,
