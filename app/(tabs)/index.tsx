@@ -154,9 +154,9 @@ export default function IndexScreen() {
 
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.headerRow}>
-          <View>
+          <View style={styles.headerTextWrap}>
             <Text style={styles.kicker}>{isPro ? 'Pro' : 'Free'}</Text>
-            <Text style={styles.title}>Daily Flow Check-In</Text>
+            <Text style={styles.title}>Flow check-in</Text>
             <Text style={styles.subtitle}>{statusText}</Text>
           </View>
           <Pressable style={styles.statusPill} onPress={() => void handleAutoSyncTrigger()}>
@@ -167,14 +167,18 @@ export default function IndexScreen() {
         <View style={styles.heroPanel}>
           <View style={styles.metricGrid}>
             <View style={[styles.metricCell, { borderColor: pressureState.style.borderColor, backgroundColor: pressureState.style.backgroundColor }]}>
-              <Text style={styles.metricLabel}>Pressure</Text>
+              <View style={styles.metricHeaderRow}>
+                <Text style={styles.metricLabel}>Pressure</Text>
+                <Text style={[styles.metricZone, { color: pressureState.style.color }]}>{pressureState.label}</Text>
+              </View>
               <Text style={styles.metricValue}>{tension}</Text>
-              <Text style={[styles.metricTarget, { color: pressureState.style.color }]}>{pressureState.label} zone</Text>
             </View>
             <View style={[styles.metricCell, { borderColor: flowState.style.borderColor, backgroundColor: flowState.style.backgroundColor }]}>
-              <Text style={styles.metricLabel}>Stability</Text>
+              <View style={styles.metricHeaderRow}>
+                <Text style={styles.metricLabel}>Stability</Text>
+                <Text style={[styles.metricZone, { color: flowState.style.color }]}>{flowState.label}</Text>
+              </View>
               <Text style={styles.metricValue}>{stability}</Text>
-              <Text style={[styles.metricTarget, { color: flowState.style.color }]}>{flowState.label} zone</Text>
             </View>
           </View>
 
@@ -182,13 +186,8 @@ export default function IndexScreen() {
             <Text style={styles.statusLabel}>{isHeavyDrag ? 'High Friction / Heavy Drag' : isIdealFlow ? 'Low Friction / Ideal Flow' : 'Balanced / Steady Load'}</Text>
             <Text style={styles.insightText}>
               {isHeavyDrag
-                ? 'The system is carrying too much drag. Expect slower thinking, more friction in decisions, and a quicker drop in focus.'
-                : 'The system is running clean. The environment is supporting focus instead of fighting it.'}
-            </Text>
-            <Text style={styles.insightText}>
-              {isHeavyDrag
-                ? 'Action: keep the day light, reduce complexity, and save heavy thinking for a later window.'
-                : 'Action: lean into your hardest work now while the signal is clear and stable.'}
+                ? 'Your environment is pushing against focus. Keep the work lighter and delay high-complexity choices.'
+                : 'The signal is clear. This is a good window to move decisively and keep momentum high.'}
             </Text>
           </View>
         </View>
@@ -259,26 +258,29 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 16,
+    marginBottom: 18,
+    gap: 12,
+  },
+  headerTextWrap: {
+    flex: 1,
   },
   kicker: {
     color: '#7af7d1',
-    fontSize: 12,
+    fontSize: 11,
     letterSpacing: 2,
     textTransform: 'uppercase',
-    marginBottom: 4,
+    marginBottom: 6,
   },
   title: {
     color: '#f2f7ff',
-    fontSize: 28,
+    fontSize: 30,
     fontWeight: '800',
-    maxWidth: 220,
+    letterSpacing: -0.6,
   },
   subtitle: {
     color: '#9bb0c8',
     fontSize: 12,
-    marginTop: 10,
-    maxWidth: 230,
+    marginTop: 8,
     lineHeight: 18,
   },
   statusPill: {
@@ -288,7 +290,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     borderWidth: 1,
     borderColor: '#243752',
-    marginTop: 12,
+    marginTop: 8,
   },
   pillText: {
     color: '#dfeaf7',
@@ -329,36 +331,38 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   metricGrid: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: 'column',
     gap: 12,
   },
   metricCell: {
-    flex: 1,
     backgroundColor: '#101d2d',
     borderRadius: 18,
-    padding: 14,
+    padding: 16,
     borderWidth: 1,
-    borderColor: '#1e2f49',
+  },
+  metricHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
   },
   metricLabel: {
     color: '#9bb0c8',
     fontSize: 12,
-    marginBottom: 8,
     letterSpacing: 0.7,
     textTransform: 'uppercase',
   },
-  metricValue: {
-    color: '#f4f8ff',
-    fontSize: 26,
+  metricZone: {
+    fontSize: 11,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
     fontWeight: '700',
   },
-  metricTarget: {
-    color: '#aabbd0',
-    fontSize: 11,
-    marginTop: 8,
-    letterSpacing: 0.6,
-    textTransform: 'uppercase',
+  metricValue: {
+    color: '#f4f8ff',
+    fontSize: 34,
+    fontWeight: '700',
+    lineHeight: 38,
   },
   formCard: {
     backgroundColor: '#0d1729',
