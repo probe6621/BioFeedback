@@ -160,15 +160,19 @@ export default function IndexScreen() {
             <View style={styles.metricCell}>
               <Text style={styles.metricLabel}>Environmental & Internal Pressure</Text>
               <Text style={styles.metricValue}>{tension}</Text>
+              <Text style={styles.metricTarget}>Target: Low (20–45)</Text>
             </View>
             <View style={styles.metricCell}>
               <Text style={styles.metricLabel}>Coherence & Baseline Flow</Text>
               <Text style={styles.metricValue}>{stability}</Text>
+              <Text style={styles.metricTarget}>Target: High (75–95)</Text>
             </View>
           </View>
 
-          <View style={styles.insightBanner}>
-            <Text style={styles.insightText}>{buildInsightText(tension, stability)}</Text>
+          <View style={[styles.insightBanner, tension > 65 || stability < 65 ? styles.warningBanner : styles.successBanner]}>
+            <Text style={styles.statusLabel}>{tension > 65 || stability < 65 ? 'Status: High Environmental Friction' : 'Status: Low-Friction Flow State'}</Text>
+            <Text style={styles.insightText}>{tension > 65 || stability < 65 ? 'Why You Care: Your cognitive battery is leaking twice as fast today. Expect heavy brain fog and faster mental fatigue.' : 'Why You Care: Zero atmospheric drag. Your internal circuit is locked in.'}</Text>
+            <Text style={styles.insightText}>{tension > 65 || stability < 65 ? 'Action: Do not tackle complex deep work right now. Protect your focus blocks and keep decisions simple.' : 'Action: This is your green light. Lean hard into execution and tackle your hardest tasks now.'}</Text>
           </View>
         </View>
 
@@ -272,17 +276,30 @@ const styles = StyleSheet.create({
     marginBottom: 18,
   },
   insightBanner: {
-    backgroundColor: '#101d2d',
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#243752',
     padding: 14,
     marginTop: 14,
+  },
+  warningBanner: {
+    backgroundColor: '#2c1723',
+    borderColor: '#ff7f7a',
+  },
+  successBanner: {
+    backgroundColor: '#102b23',
+    borderColor: '#63e6a7',
+  },
+  statusLabel: {
+    color: '#f5fbff',
+    fontSize: 15,
+    fontWeight: '800',
+    marginBottom: 8,
   },
   insightText: {
     color: '#dfeaf7',
     fontSize: 13,
     lineHeight: 20,
+    marginTop: 6,
   },
   vectorPanel: {
     height: 180,
@@ -344,6 +361,13 @@ const styles = StyleSheet.create({
     color: '#f4f8ff',
     fontSize: 26,
     fontWeight: '700',
+  },
+  metricTarget: {
+    color: '#aabbd0',
+    fontSize: 11,
+    marginTop: 8,
+    letterSpacing: 0.6,
+    textTransform: 'uppercase',
   },
   formCard: {
     backgroundColor: '#0d1729',
