@@ -193,7 +193,7 @@ export default function IndexScreen() {
           </Pressable>
 
           <View style={[styles.combinedScoreCard, { backgroundColor: combinedState.bg, borderColor: combinedState.color }]}>
-            <Text style={styles.combinedLabel}>Brain Read</Text>
+            <Text style={styles.combinedLabel}>Combined Brain Score</Text>
             <View style={styles.combinedRow}>
               <Text style={styles.combinedValue}>{combinedScore}</Text>
               <Text style={[styles.combinedState, { color: combinedState.color }]}>{combinedState.label}</Text>
