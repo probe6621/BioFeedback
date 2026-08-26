@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TensionCard } from '../../components/TensionCard';
-import { VectorSlider } from '../../components/VectorSlider';
 import { runAutoSync } from '../../src/services/autoSync';
 import { getIsPro, setIsPro } from '../../src/services/subscription';
 import { DailyCheckIn, getRecentCheckIns, saveDailyCheckIn } from '../../utils/storage';
@@ -131,7 +130,17 @@ export default function IndexScreen() {
     const nextHistory = await saveDailyCheckIn({ date: today, tension, stability });
     setHistory(nextHistory);
     setShowCard(true);
-    Alert.alert('Daily vector logged', 'Your telemetry has been stored locally for the week.');
+    Alert.alert('Check-in saved', 'Your daily read has been stored locally for the week.');
+  };
+
+  const handleCheckInNow = async () => {
+    if (!isPro) {
+      setShowUpgradeModal(true);
+      return;
+    }
+
+    await handleAutoSyncTrigger();
+    await saveLog();
   };
 
   return (
@@ -247,29 +256,13 @@ export default function IndexScreen() {
         </View>
 
         <View style={styles.formCard}>
-          <Pressable style={styles.primaryButton} onPress={saveLog}>
-            <Text style={styles.primaryButtonText}>Log Daily Check-In</Text>
+          <Pressable style={styles.primaryButton} onPress={() => void handleCheckInNow()}>
+            <Text style={styles.primaryButtonText}>{isPro ? 'Run check-in' : 'Check in now'}</Text>
           </Pressable>
 
           <Pressable style={styles.secondaryButton} onPress={() => setShowCard(true)}>
-            <Text style={styles.secondaryButtonText}>Generate Tension Card</Text>
+            <Text style={styles.secondaryButtonText}>View check-in snapshot</Text>
           </Pressable>
-
-          <View style={styles.sliderBlock}>
-            <Text style={styles.sliderTitle}>How do you feel today?</Text>
-            <VectorSlider
-              label="Pressure: how heavy does today feel?"
-              value={tension}
-              onChange={setTension}
-              accent={tension >= 70 ? '#ff8a65' : tension <= 35 ? '#63e6a7' : '#8cd8ff'}
-            />
-            <VectorSlider
-              label="Stability: how steady do you feel?"
-              value={stability}
-              onChange={setStability}
-              accent={stability >= 75 ? '#63e6a7' : stability <= 45 ? '#ff8a65' : '#8cd8ff'}
-            />
-          </View>
         </View>
 
         {showCard ? (
@@ -471,17 +464,6 @@ const styles = StyleSheet.create({
     borderColor: '#1b2d44',
     padding: 18,
     marginBottom: 18,
-  },
-  sliderBlock: {
-    marginTop: 18,
-  },
-  sliderTitle: {
-    color: '#dfeaf7',
-    marginBottom: 12,
-    fontSize: 13,
-    fontWeight: '700',
-    letterSpacing: 0.8,
-    textTransform: 'uppercase',
   },
   primaryButton: {
     borderRadius: 16,
