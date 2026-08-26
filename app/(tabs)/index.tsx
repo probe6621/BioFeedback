@@ -289,16 +289,6 @@ export default function IndexScreen() {
           </View>
         </View>
 
-        <View style={styles.formCard}>
-          <Pressable style={styles.primaryButton} onPress={() => void handleCheckInNow()}>
-            <Text style={styles.primaryButtonText}>Auto-Sync</Text>
-          </Pressable>
-
-          <Pressable style={styles.secondaryButton} onPress={() => setShowCard(true)}>
-            <Text style={styles.secondaryButtonText}>View check-in snapshot</Text>
-          </Pressable>
-        </View>
-
         {showCard ? (
           <View style={styles.shareSection}>
             <Text style={styles.sectionLabel}>Share preview</Text>
@@ -555,43 +545,6 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     fontWeight: '800',
     marginTop: 10,
-  },
-  formCard: {
-    backgroundColor: '#0d1729',
-    borderRadius: 28,
-    borderWidth: 1,
-    borderColor: '#1b2d44',
-    padding: 18,
-    marginBottom: 18,
-  },
-  primaryButton: {
-    borderRadius: 12,
-    backgroundColor: '#7af7d1',
-    paddingVertical: 12,
-    alignItems: 'center',
-    marginTop: 10,
-    minHeight: 42,
-  },
-  primaryButtonText: {
-    color: '#06121c',
-    fontSize: 13,
-    fontWeight: '700',
-    letterSpacing: 0.9,
-    textTransform: 'uppercase',
-  },
-  secondaryButton: {
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#314c6f',
-    backgroundColor: '#101d2d',
-    paddingVertical: 16,
-    alignItems: 'center',
-    marginTop: 12,
-  },
-  secondaryButtonText: {
-    color: '#edf5ff',
-    fontSize: 15,
-    fontWeight: '600',
   },
   shareSection: {
     marginBottom: 18,
