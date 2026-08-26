@@ -257,7 +257,7 @@ export default function IndexScreen() {
 
         <View style={styles.formCard}>
           <Pressable style={styles.primaryButton} onPress={() => void handleCheckInNow()}>
-            <Text style={styles.primaryButtonText}>{isPro ? 'Run check-in' : 'Check in now'}</Text>
+            <Text style={styles.primaryButtonText}>Auto-Sync</Text>
           </Pressable>
 
           <Pressable style={styles.secondaryButton} onPress={() => setShowCard(true)}>
@@ -466,16 +466,19 @@ const styles = StyleSheet.create({
     marginBottom: 18,
   },
   primaryButton: {
-    borderRadius: 16,
+    borderRadius: 12,
     backgroundColor: '#7af7d1',
-    paddingVertical: 16,
+    paddingVertical: 12,
     alignItems: 'center',
     marginTop: 10,
+    minHeight: 42,
   },
   primaryButtonText: {
     color: '#06121c',
-    fontSize: 16,
+    fontSize: 13,
     fontWeight: '700',
+    letterSpacing: 0.9,
+    textTransform: 'uppercase',
   },
   secondaryButton: {
     borderRadius: 16,
