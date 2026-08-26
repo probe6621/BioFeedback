@@ -105,20 +105,20 @@ export default function IndexScreen() {
 
   const pressureState = useMemo(() => {
     if (tension >= 70) {
-      return { label: 'Heavy', style: { backgroundColor: '#2c1723', borderColor: '#ff8a65', color: '#ffd6c8' } };
+      return { label: 'Heavy drag', style: { backgroundColor: '#2c1723', borderColor: '#ff8a65', color: '#ffd6c8' } };
     }
     if (tension <= 35) {
-      return { label: 'Ideal', style: { backgroundColor: '#102b23', borderColor: '#63e6a7', color: '#d8ffe8' } };
+      return { label: 'Smooth', style: { backgroundColor: '#102b23', borderColor: '#63e6a7', color: '#d8ffe8' } };
     }
-    return { label: 'Watch', style: { backgroundColor: '#1e2635', borderColor: '#f7b267', color: '#ffe8b7' } };
+    return { label: 'Noticeable', style: { backgroundColor: '#1e2635', borderColor: '#f7b267', color: '#ffe8b7' } };
   }, [tension]);
 
   const flowState = useMemo(() => {
     if (stability >= 75) {
-      return { label: 'Ideal', style: { backgroundColor: '#102b23', borderColor: '#63e6a7', color: '#d8ffe8' } };
+      return { label: 'Steady', style: { backgroundColor: '#102b23', borderColor: '#63e6a7', color: '#d8ffe8' } };
     }
     if (stability <= 45) {
-      return { label: 'Heavy', style: { backgroundColor: '#2c1723', borderColor: '#ff8a65', color: '#ffd6c8' } };
+      return { label: 'Wobbly', style: { backgroundColor: '#2c1723', borderColor: '#ff8a65', color: '#ffd6c8' } };
     }
     return { label: 'Watch', style: { backgroundColor: '#1e2635', borderColor: '#f7b267', color: '#ffe8b7' } };
   }, [stability]);
@@ -173,7 +173,7 @@ export default function IndexScreen() {
               </View>
               <Text style={styles.metricValue}>{tension}</Text>
               <View style={styles.meterRow}>
-                <Text style={[styles.meterText, { color: pressureState.style.color }]}>Low</Text>
+                <Text style={[styles.meterText, { color: pressureState.style.color }]}>Calm</Text>
                 <View style={styles.meterTrack}>
                   <View
                     style={[
@@ -194,10 +194,10 @@ export default function IndexScreen() {
                     ]}
                   />
                 </View>
-                <Text style={[styles.meterText, { color: pressureState.style.color }]}>High</Text>
+                <Text style={[styles.meterText, { color: pressureState.style.color }]}>Heavy</Text>
               </View>
               <Text style={[styles.metricSummary, { color: pressureState.style.color }]}>
-                {tension >= 70 ? 'Too high' : tension <= 35 ? 'Good' : 'Watch'}
+                {tension >= 70 ? 'Bad for focus' : tension <= 35 ? 'Good for focus' : 'Okay, but watch it'}
               </Text>
             </View>
             <View style={[styles.metricCell, { borderColor: flowState.style.borderColor, backgroundColor: flowState.style.backgroundColor }]}>
@@ -207,7 +207,7 @@ export default function IndexScreen() {
               </View>
               <Text style={styles.metricValue}>{stability}</Text>
               <View style={styles.meterRow}>
-                <Text style={[styles.meterText, { color: flowState.style.color }]}>Low</Text>
+                <Text style={[styles.meterText, { color: flowState.style.color }]}>Unsteady</Text>
                 <View style={styles.meterTrack}>
                   <View
                     style={[
@@ -228,20 +228,20 @@ export default function IndexScreen() {
                     ]}
                   />
                 </View>
-                <Text style={[styles.meterText, { color: flowState.style.color }]}>High</Text>
+                <Text style={[styles.meterText, { color: flowState.style.color }]}>Steady</Text>
               </View>
               <Text style={[styles.metricSummary, { color: flowState.style.color }]}>
-                {stability >= 75 ? 'Good' : stability <= 45 ? 'Too low' : 'Watch'}
+                {stability >= 75 ? 'Good headspace' : stability <= 45 ? 'Harder to settle' : 'Solid but watch'}
               </Text>
             </View>
           </View>
 
           <View style={[styles.insightBanner, isHeavyDrag ? styles.warningBanner : styles.successBanner]}>
-            <Text style={styles.statusLabel}>{isHeavyDrag ? 'High Friction / Heavy Drag' : isIdealFlow ? 'Low Friction / Ideal Flow' : 'Balanced / Steady Load'}</Text>
+            <Text style={styles.statusLabel}>{isHeavyDrag ? 'Heavy Drag' : isIdealFlow ? 'Smooth Flow' : 'Steady'}</Text>
             <Text style={styles.insightText}>
               {isHeavyDrag
-                ? 'Your environment is pushing against focus. Keep the work lighter and delay high-complexity choices.'
-                : 'The signal is clear. This is a good window to move decisively and keep momentum high.'}
+                ? 'This means your brain is dealing with extra pressure. It will usually feel harder to think clearly, focus, or make decisions.'
+                : 'This means things feel much lighter and easier. Your brain is likely working with less stress and more clarity.'}
             </Text>
           </View>
         </View>
