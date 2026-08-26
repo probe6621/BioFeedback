@@ -174,23 +174,25 @@ export default function IndexScreen() {
             <Text style={styles.title}>Brain check-in</Text>
             <Text style={styles.subtitle}>{statusText}</Text>
           </View>
-          <Pressable style={styles.statusPill} onPress={() => void handleAutoSyncTrigger()}>
-            <Text style={styles.pillText}>{isCalibrating ? 'Calibrating...' : isPro ? 'Live' : 'Locked'}</Text>
-          </Pressable>
+          <View style={styles.headerActions}>
+            <Pressable
+              style={styles.infoButton}
+              onPress={() =>
+                Alert.alert(
+                  'What this means',
+                  'Brain = the thinking system.\nMind = the feeling and steadiness underneath it.\n\nBrain Pressure = how heavy your brain feels today.\n\nBrain Stability = how steady and settled your mind feels.\n\nHeavy drag = harder to focus, think clearly, or make decisions.\n\nSmooth flow = easier thinking, clearer focus, calmer energy.',
+                )
+              }
+            >
+              <Text style={styles.infoButtonText}>i</Text>
+            </Pressable>
+            <Pressable style={styles.statusPill} onPress={() => void handleAutoSyncTrigger()}>
+              <Text style={styles.pillText}>{isCalibrating ? 'Calibrating...' : isPro ? 'Live' : 'Locked'}</Text>
+            </Pressable>
+          </View>
         </View>
 
         <View style={styles.heroPanel}>
-          <Pressable
-            style={styles.infoButton}
-            onPress={() =>
-              Alert.alert(
-                'What this means',
-                'Brain = the thinking system.\nMind = the feeling and steadiness underneath it.\n\nBrain Pressure = how heavy your brain feels today.\n\nBrain Stability = how steady and settled your mind feels.\n\nHeavy drag = harder to focus, think clearly, or make decisions.\n\nSmooth flow = easier thinking, clearer focus, calmer energy.',
-              )
-            }
-          >
-            <Text style={styles.infoButtonText}>i</Text>
-          </Pressable>
 
           <View style={[styles.combinedScoreCard, { backgroundColor: combinedState.bg, borderColor: combinedState.color }]}>
             <Text style={styles.combinedLabel}>Combined Brain Score</Text>
@@ -362,6 +364,12 @@ const styles = StyleSheet.create({
     marginTop: 8,
     lineHeight: 18,
   },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 8,
+  },
   statusPill: {
     backgroundColor: '#101d2d',
     paddingHorizontal: 12,
@@ -369,7 +377,6 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     borderWidth: 1,
     borderColor: '#243752',
-    marginTop: 8,
   },
   pillText: {
     color: '#dfeaf7',
