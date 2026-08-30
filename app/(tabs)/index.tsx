@@ -31,6 +31,8 @@ export default function IndexScreen() {
   const [isCalibrating, setIsCalibrating] = useState(true);
   const [isPro, setProState] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [showScienceModal, setShowScienceModal] = useState(false);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -141,6 +143,68 @@ export default function IndexScreen() {
             </Pressable>
             <Pressable style={styles.modalSecondary} onPress={() => setShowUpgradeModal(false)}>
               <Text style={styles.modalSecondaryText}>Maybe later</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal visible={showScienceModal} transparent animationType="fade" onRequestClose={() => setShowScienceModal(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalKicker}>The Science</Text>
+            <Text style={styles.modalTitle}>Why environmental drag matters</Text>
+            <Text style={styles.modalBody}>
+              BrainFriction is a practical environmental load model, not a magic trick. It reads how location and
+              weather can change the background friction your brain is working against.
+            </Text>
+            <View style={styles.modalInfoCard}>
+              <Text style={styles.modalInfoTitle}>Barometric pressure shifts</Text>
+              <Text style={styles.modalInfoBody}>
+                Drops in atmospheric pressure often travel with weather fronts and changing air density. That can make
+                execution feel slower and heavier.
+              </Text>
+            </View>
+            <View style={styles.modalInfoCard}>
+              <Text style={styles.modalInfoTitle}>Biological pressure sensitivity</Text>
+              <Text style={styles.modalInfoBody}>
+                Pressure, temperature, humidity, and fronts can act like physical drag on fluid-filled biological
+                systems. The body notices that shift before you always consciously do.
+              </Text>
+            </View>
+            <View style={styles.modalInfoCard}>
+              <Text style={styles.modalInfoTitle}>Telemetry model</Text>
+              <Text style={styles.modalInfoBody}>
+                Live GPS and weather inputs are blended with a local baseline to estimate when the environment is
+                helping or hindering focus windows.
+              </Text>
+            </View>
+            <Pressable style={styles.modalButton} onPress={() => setShowScienceModal(false)}>
+              <Text style={styles.modalButtonText}>Close</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal visible={showHistoryModal} transparent animationType="fade" onRequestClose={() => setShowHistoryModal(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalKicker}>Last 7 Days</Text>
+            <Text style={styles.modalTitle}>Recent brain reads</Text>
+            <Text style={styles.modalBody}>Your latest local reads are stored on-device and rolled into the archive below.</Text>
+            <View style={styles.modalList}>
+              {history.slice(0, 7).length === 0 ? (
+                <Text style={styles.modalBody}>No entries yet.</Text>
+              ) : (
+                history.slice(0, 7).map((entry) => (
+                  <View key={entry.date} style={styles.modalHistoryRow}>
+                    <Text style={styles.modalHistoryDate}>{entry.date}</Text>
+                    <Text style={styles.modalHistoryValue}>{entry.tension} / {entry.stability}</Text>
+                  </View>
+                ))
+              )}
+            </View>
+            <Pressable style={styles.modalButton} onPress={() => setShowHistoryModal(false)}>
+              <Text style={styles.modalButtonText}>Close</Text>
             </Pressable>
           </View>
         </View>
@@ -274,42 +338,13 @@ export default function IndexScreen() {
           </View>
         </View>
 
-        <View style={styles.scienceSection}>
-          <Text style={styles.sectionLabel}>The Science</Text>
-
-          <View style={styles.scienceCard}>
-            <Text style={styles.scienceTitle}>Barometric pressure shifts</Text>
-            <Text style={styles.scienceBody}>
-              Drops in atmospheric pressure often come with weather fronts and changing air density. That can raise
-              environmental drag and make focused execution feel slower.
-            </Text>
-          </View>
-
-          <View style={styles.scienceCard}>
-            <Text style={styles.scienceTitle}>Biological pressure sensitivity</Text>
-            <Text style={styles.scienceBody}>
-              Fluid-filled biological systems respond to changing pressure, temperature, and humidity. In plain
-              terms: the body notices weather, and that can show up as friction in attention and rhythm.
-            </Text>
-          </View>
-
-          <View style={styles.scienceCard}>
-            <Text style={styles.scienceTitle}>Telemetry model</Text>
-            <Text style={styles.scienceBody}>
-              BrainFriction blends local baseline data with live GPS and weather inputs to estimate when the
-              environment is helping or hindering your best focus window.
-            </Text>
-          </View>
-        </View>
-
-        <View style={styles.historyWidget}>
-          <Text style={styles.sectionLabel}>Last 7 Days</Text>
-          {history.slice(0, 4).map((entry) => (
-            <View key={entry.date} style={styles.historyRow}>
-              <Text style={styles.historyDate}>{entry.date}</Text>
-              <Text style={styles.historyValue}>{entry.tension} / {entry.stability}</Text>
-            </View>
-          ))}
+        <View style={styles.utilityRow}>
+          <Pressable style={styles.utilityButton} onPress={() => setShowScienceModal(true)}>
+            <Text style={styles.utilityButtonText}>The Science</Text>
+          </Pressable>
+          <Pressable style={styles.utilityButton} onPress={() => setShowHistoryModal(true)}>
+            <Text style={styles.utilityButtonText}>Last 7 Days</Text>
+          </Pressable>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -426,28 +461,6 @@ const styles = StyleSheet.create({
   successBanner: {
     backgroundColor: '#102b23',
     borderColor: '#63e6a7',
-  },
-  scienceSection: {
-    marginBottom: 18,
-  },
-  scienceCard: {
-    backgroundColor: '#0d1729',
-    borderRadius: 22,
-    borderWidth: 1,
-    borderColor: '#1c2b42',
-    padding: 16,
-    marginBottom: 12,
-  },
-  scienceTitle: {
-    color: '#f5fbff',
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 8,
-  },
-  scienceBody: {
-    color: '#dfeaf7',
-    lineHeight: 22,
-    fontSize: 13,
   },
   statusLabel: {
     color: '#f5fbff',
@@ -656,6 +669,60 @@ const styles = StyleSheet.create({
     color: '#05151c',
     fontSize: 16,
     fontWeight: '700',
+  },
+  utilityRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 18,
+  },
+  utilityButton: {
+    flex: 1,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: '#314c6f',
+    backgroundColor: '#101d2d',
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  utilityButtonText: {
+    color: '#edf5ff',
+    fontWeight: '700',
+  },
+  modalInfoCard: {
+    backgroundColor: '#101d2d',
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: '#1e2f49',
+    padding: 14,
+    marginBottom: 10,
+  },
+  modalInfoTitle: {
+    color: '#f5fbff',
+    fontSize: 15,
+    fontWeight: '700',
+    marginBottom: 6,
+  },
+  modalInfoBody: {
+    color: '#dfeaf7',
+    lineHeight: 21,
+    fontSize: 13,
+  },
+  modalList: {
+    marginBottom: 12,
+  },
+  modalHistoryRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#16273d',
+  },
+  modalHistoryDate: {
+    color: '#c7d5ea',
+  },
+  modalHistoryValue: {
+    color: '#f5fbff',
+    fontWeight: '600',
   },
   modalSecondary: {
     borderWidth: 1,
