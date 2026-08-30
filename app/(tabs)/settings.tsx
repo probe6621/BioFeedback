@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
 import {
   AlertConfig,
   getAlertConfig,
@@ -191,6 +192,16 @@ export default function SettingsScreen() {
             This app is a self-tracking tool, not a medical diagnosis or treatment platform. Use it as reflection
             and cadence support, not as a clinical substitute.
           </Text>
+        </View>
+
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Privacy policy</Text>
+          <Text style={styles.bodyText}>
+            Read how BrainFriction handles location, weather, alerts, and on-device storage.
+          </Text>
+          <Pressable style={styles.ctaButton} onPress={() => router.push('/privacy')}>
+            <Text style={styles.ctaButtonText}>Open privacy policy</Text>
+          </Pressable>
         </View>
       </ScrollView>
     </SafeAreaView>

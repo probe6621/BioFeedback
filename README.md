@@ -81,6 +81,10 @@ npm run build:android
 
 Before publishing to Google Play, you will still need to fill out the Play Console listing, privacy policy URL, and content rating questionnaire.
 
+## Privacy policy
+
+An in-app privacy policy is available at `/privacy` for web builds and standalone routing. Publish that route to a public host for your Play Store privacy-policy URL.
+
 ## Local storage
 
 The app persists the daily history locally using AsyncStorage. This keeps the MVP simple and private while still enabling a rolling 7-day view for the free tier experience.
