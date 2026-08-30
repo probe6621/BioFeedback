@@ -9,27 +9,25 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { TensionCard } from '../../components/TensionCard';
 import { evaluateAutoSyncAlerts } from '../../src/services/alerts';
 import { runAutoSync } from '../../src/services/autoSync';
 import { getIsPro, setIsPro } from '../../src/services/subscription';
-import { DailyCheckIn, getRecentCheckIns, saveDailyCheckIn } from '../../utils/storage';
+import { DailyCheckIn, getRecentCheckIns } from '../../utils/storage';
 
 const defaultTension = 72;
 const defaultStability = 64;
 
 const normalizeStatusText = (status: string) =>
   status
-    .replace('Location permission unavailable — using fallback field calibration', 'Running local ambient baseline (Tap to sync GPS)')
-    .replace('Connection drift detected — fallback field calibration applied', 'Running local ambient baseline (Tap to sync GPS)')
-    .replace('Offline calibration active — using ambient fallback estimate', 'Running local ambient baseline (Tap to sync GPS)');
+    .replace('Location permission unavailable — using fallback field calibration', 'Running local ambient baseline (Unlock Live Sync for live conditions)')
+    .replace('Connection drift detected — fallback field calibration applied', 'Running local ambient baseline (Unlock Live Sync for live conditions)')
+    .replace('Offline calibration active — using ambient fallback estimate', 'Running local ambient baseline (Unlock Live Sync for live conditions)');
 
 export default function IndexScreen() {
   const [tension, setTension] = useState(defaultTension);
   const [stability, setStability] = useState(defaultStability);
   const [history, setHistory] = useState<DailyCheckIn[]>([]);
-  const [showCard, setShowCard] = useState(false);
-  const [statusText, setStatusText] = useState('Running local ambient baseline (Tap to sync GPS)');
+  const [statusText, setStatusText] = useState('Running local ambient baseline (Unlock Live Sync for live conditions)');
   const [isCalibrating, setIsCalibrating] = useState(true);
   const [isPro, setProState] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
@@ -50,7 +48,7 @@ export default function IndexScreen() {
           const latest = entries[0];
           setTension(latest.tension);
           setStability(latest.stability);
-          setStatusText('Using your last local check-in as a starting point');
+          setStatusText('Using your last local read as a starting point');
         }
 
         setHistory(entries);
@@ -130,24 +128,6 @@ export default function IndexScreen() {
     return { label: 'Heavy drag', color: '#ff8a65', bg: '#2c1723' };
   }, [combinedScore]);
 
-  const saveLog = async () => {
-    const today = new Date().toISOString().slice(0, 10);
-    const nextHistory = await saveDailyCheckIn({ date: today, tension, stability });
-    setHistory(nextHistory);
-    setShowCard(true);
-    Alert.alert('Check-in saved', 'Your daily read has been stored locally for the week.');
-  };
-
-  const handleCheckInNow = async () => {
-    if (!isPro) {
-      setShowUpgradeModal(true);
-      return;
-    }
-
-    await handleAutoSyncTrigger();
-    await saveLog();
-  };
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <Modal visible={showUpgradeModal} transparent animationType="fade" onRequestClose={() => setShowUpgradeModal(false)}>
@@ -170,7 +150,7 @@ export default function IndexScreen() {
         <View style={styles.headerRow}>
           <View style={styles.headerTextWrap}>
             <Text style={styles.kicker}>{isPro ? 'Pro' : 'Free'}</Text>
-            <Text style={styles.title}>Brain check-in</Text>
+            <Text style={styles.title}>BrainFriction</Text>
             <Text style={styles.subtitle}>{statusText}</Text>
           </View>
           <View style={styles.headerActions}>
@@ -179,15 +159,21 @@ export default function IndexScreen() {
               onPress={() =>
                 Alert.alert(
                   'What this means',
-                  'Brain = the thinking system.\nMind = the feeling and steadiness underneath it.\n\nBrain Pressure = how heavy your brain feels today.\nBrain Stability = how steady and settled your mind feels.\n\nInputs include location + weather (temperature, humidity, barometric pressure, weather fronts) to estimate environmental drag.\n\nHeavy drag = harder to focus, think clearly, or make decisions.\nSmooth flow = easier thinking, clearer focus, calmer energy.',
+                  'Brain = the thinking system.\nMind = the feeling and steadiness underneath it.\n\nBrain Pressure = how heavy your brain feels today.\nBrain Stability = how steady and settled your mind feels.\n\nInputs include GPS location, weather, temperature, humidity, barometric pressure, and weather fronts. Those conditions help estimate environmental drag and focus windows.\n\nHeavy drag = harder to focus, think clearly, or make decisions.\nSmooth flow = easier thinking, clearer focus, calmer energy.',
                 )
               }
             >
               <Text style={styles.infoButtonText}>i</Text>
             </Pressable>
-            <Pressable style={styles.statusPill} onPress={() => void handleAutoSyncTrigger()}>
-              <Text style={styles.pillText}>{isCalibrating ? 'Calibrating...' : isPro ? 'Live' : 'Locked'}</Text>
-            </Pressable>
+            {isPro ? (
+              <Pressable style={styles.proBadge} onPress={() => void handleAutoSyncTrigger()}>
+                <Text style={styles.proBadgeText}>{isCalibrating ? 'Syncing...' : 'Pro Active'}</Text>
+              </Pressable>
+            ) : (
+              <Pressable style={styles.unlockButton} onPress={() => setShowUpgradeModal(true)}>
+                <Text style={styles.unlockButtonText}>Unlock Live Sync</Text>
+              </Pressable>
+            )}
           </View>
         </View>
 
@@ -288,16 +274,33 @@ export default function IndexScreen() {
           </View>
         </View>
 
-        {showCard ? (
-          <View style={styles.shareSection}>
-            <Text style={styles.sectionLabel}>Share preview</Text>
-            <TensionCard
-              tension={tension}
-              stability={stability}
-              dateLabel={new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-            />
+        <View style={styles.scienceSection}>
+          <Text style={styles.sectionLabel}>The Science</Text>
+
+          <View style={styles.scienceCard}>
+            <Text style={styles.scienceTitle}>Barometric pressure shifts</Text>
+            <Text style={styles.scienceBody}>
+              Drops in atmospheric pressure often come with weather fronts and changing air density. That can raise
+              environmental drag and make focused execution feel slower.
+            </Text>
           </View>
-        ) : null}
+
+          <View style={styles.scienceCard}>
+            <Text style={styles.scienceTitle}>Biological pressure sensitivity</Text>
+            <Text style={styles.scienceBody}>
+              Fluid-filled biological systems respond to changing pressure, temperature, and humidity. In plain
+              terms: the body notices weather, and that can show up as friction in attention and rhythm.
+            </Text>
+          </View>
+
+          <View style={styles.scienceCard}>
+            <Text style={styles.scienceTitle}>Telemetry model</Text>
+            <Text style={styles.scienceBody}>
+              BrainFriction blends local baseline data with live GPS and weather inputs to estimate when the
+              environment is helping or hindering your best focus window.
+            </Text>
+          </View>
+        </View>
 
         <View style={styles.historyWidget}>
           <Text style={styles.sectionLabel}>Last 7-day drift</Text>
@@ -359,17 +362,29 @@ const styles = StyleSheet.create({
     gap: 8,
     marginTop: 8,
   },
-  statusPill: {
-    backgroundColor: '#101d2d',
+  unlockButton: {
+    backgroundColor: '#7af7d1',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 18,
+  },
+  unlockButtonText: {
+    color: '#06121c',
+    fontWeight: '800',
+    letterSpacing: 0.5,
+  },
+  proBadge: {
+    backgroundColor: '#102b23',
     paddingHorizontal: 12,
     paddingVertical: 10,
     borderRadius: 18,
     borderWidth: 1,
-    borderColor: '#243752',
+    borderColor: '#63e6a7',
   },
-  pillText: {
-    color: '#dfeaf7',
-    fontWeight: '600',
+  proBadgeText: {
+    color: '#d8ffe8',
+    fontWeight: '800',
+    letterSpacing: 0.4,
   },
   heroPanel: {
     backgroundColor: '#0d1729',
@@ -411,6 +426,28 @@ const styles = StyleSheet.create({
   successBanner: {
     backgroundColor: '#102b23',
     borderColor: '#63e6a7',
+  },
+  scienceSection: {
+    marginBottom: 18,
+  },
+  scienceCard: {
+    backgroundColor: '#0d1729',
+    borderRadius: 22,
+    borderWidth: 1,
+    borderColor: '#1c2b42',
+    padding: 16,
+    marginBottom: 12,
+  },
+  scienceTitle: {
+    color: '#f5fbff',
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 8,
+  },
+  scienceBody: {
+    color: '#dfeaf7',
+    lineHeight: 22,
+    fontSize: 13,
   },
   statusLabel: {
     color: '#f5fbff',
@@ -544,9 +581,6 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     fontWeight: '800',
     marginTop: 10,
-  },
-  shareSection: {
-    marginBottom: 18,
   },
   sectionLabel: {
     color: '#a7bdd5',

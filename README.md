@@ -1,6 +1,6 @@
-# BioFeedback
+# BrainFriction
 
-BioFeedback is a local-first daily wellness telemetry app built with React Native and Expo. The app focuses on a fast brain-state check-in flow that combines live environmental telemetry with simple, plain-language readouts.
+BrainFriction is a local-first daily telemetry app built with React Native and Expo. It combines live environmental inputs with a simple brain-state readout so users can understand how today feels at a glance.
 
 ## Why it exists
 
@@ -8,6 +8,7 @@ The app is designed to help users track energy, attention, and mental load in a 
 
 ## Features
 
+- The Science tab with an explainer for environmental drag and focus windows
 - Daily dashboard with brain-state telemetry
   - Brain Pressure
   - Brain Stability
@@ -18,7 +19,7 @@ The app is designed to help users track energy, attention, and mental load in a 
   - Low Stability threshold
   - Morning briefing / Heavy drag warning / Flow state ready
 - Local history tracking with daily entries stored on-device
-- Share-ready check-in snapshot card
+- Share-ready telemetry snapshot card
 - Settings screen with Pro toggle and alert settings
 - Built for Expo and React Native web/native development
 
@@ -72,7 +73,7 @@ npm run web
 
 ## Local storage
 
-The app persists the daily check-in history locally using AsyncStorage. This keeps the MVP simple and private while still enabling a rolling 7-day view for the free tier experience.
+The app persists the daily history locally using AsyncStorage. This keeps the MVP simple and private while still enabling a rolling 7-day view for the free tier experience.
 
 ## Notes
 

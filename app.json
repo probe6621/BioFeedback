@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "tension-checkin",
-    "slug": "tension-checkin",
+    "name": "BrainFriction",
+    "slug": "brainfriction",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

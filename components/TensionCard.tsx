@@ -14,11 +14,11 @@ export function TensionCard({ tension, stability, dateLabel }: TensionCardProps)
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
-        <Text style={styles.kicker}>Daily telemetry</Text>
+        <Text style={styles.kicker}>BrainFriction</Text>
         <Text style={styles.date}>{dateLabel}</Text>
       </View>
 
-      <Text style={styles.title}>Pressure</Text>
+      <Text style={styles.title}>Combined Brain Score</Text>
       <Text style={[styles.value, { color: pressureColor }]}>{tension}</Text>
 
       <View style={styles.footerRow}>

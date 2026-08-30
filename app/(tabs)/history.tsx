@@ -13,23 +13,23 @@ export default function HistoryScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>Local History</Text>
+        <Text style={styles.title}>BrainFriction History</Text>
         <Text style={styles.subtitle}>7-day rolling archive for your free tier.</Text>
 
         {history.length === 0 ? (
           <View style={styles.emptyState}>
-            <Text style={styles.emptyText}>No entries yet. Log your first daily vector to populate the archive.</Text>
+            <Text style={styles.emptyText}>No entries yet. Run Auto-Sync once to populate the archive.</Text>
           </View>
         ) : (
           history.map((entry) => (
             <View key={entry.date} style={styles.card}>
               <Text style={styles.date}>{entry.date}</Text>
               <View style={styles.metricRow}>
-                <Text style={styles.metricLabel}>Tension</Text>
+                <Text style={styles.metricLabel}>Brain Pressure</Text>
                 <Text style={styles.metricValue}>{entry.tension}</Text>
               </View>
               <View style={styles.metricRow}>
-                <Text style={styles.metricLabel}>Stability</Text>
+                <Text style={styles.metricLabel}>Brain Stability</Text>
                 <Text style={styles.metricValue}>{entry.stability}</Text>
               </View>
             </View>

@@ -180,7 +180,7 @@ export default function SettingsScreen() {
         <View style={styles.card}>
           <Text style={styles.cardTitle}>App info</Text>
           <Text style={styles.bodyText}>
-            Tension Check-In is a local-first daily telemetry journal designed to help you track your attention,
+          BrainFriction is a local-first daily telemetry journal designed to help you track your attention,
             energy, and stability in a compact daily loop.
           </Text>
         </View>
