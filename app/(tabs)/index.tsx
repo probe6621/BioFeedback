@@ -303,7 +303,7 @@ export default function IndexScreen() {
         </View>
 
         <View style={styles.historyWidget}>
-          <Text style={styles.sectionLabel}>Last 7-day drift</Text>
+          <Text style={styles.sectionLabel}>Last 7 Days</Text>
           {history.slice(0, 4).map((entry) => (
             <View key={entry.date} style={styles.historyRow}>
               <Text style={styles.historyDate}>{entry.date}</Text>
