@@ -10,12 +10,19 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TensionCard } from '../../components/TensionCard';
+import { evaluateAutoSyncAlerts } from '../../src/services/alerts';
 import { runAutoSync } from '../../src/services/autoSync';
 import { getIsPro, setIsPro } from '../../src/services/subscription';
 import { DailyCheckIn, getRecentCheckIns, saveDailyCheckIn } from '../../utils/storage';
 
 const defaultTension = 72;
 const defaultStability = 64;
+
+const normalizeStatusText = (status: string) =>
+  status
+    .replace('Location permission unavailable — using fallback field calibration', 'Running local ambient baseline (Tap to sync GPS)')
+    .replace('Connection drift detected — fallback field calibration applied', 'Running local ambient baseline (Tap to sync GPS)')
+    .replace('Offline calibration active — using ambient fallback estimate', 'Running local ambient baseline (Tap to sync GPS)');
 
 export default function IndexScreen() {
   const [tension, setTension] = useState(defaultTension);
@@ -57,12 +64,8 @@ export default function IndexScreen() {
 
         setTension(nextValues.tension);
         setStability(nextValues.stability);
-        setStatusText(
-          nextValues.statusText
-            .replace('Location permission unavailable — using fallback field calibration', 'Running local ambient baseline (Tap to sync GPS)')
-            .replace('Connection drift detected — fallback field calibration applied', 'Running local ambient baseline (Tap to sync GPS)')
-            .replace('Offline calibration active — using ambient fallback estimate', 'Running local ambient baseline (Tap to sync GPS)'),
-        );
+        setStatusText(normalizeStatusText(nextValues.statusText));
+        await evaluateAutoSyncAlerts(nextValues);
       }
 
       setIsCalibrating(false);
@@ -86,12 +89,8 @@ export default function IndexScreen() {
 
     setTension(nextValues.tension);
     setStability(nextValues.stability);
-    setStatusText(
-      nextValues.statusText
-        .replace('Location permission unavailable — using fallback field calibration', 'Running local ambient baseline (Tap to sync GPS)')
-        .replace('Connection drift detected — fallback field calibration applied', 'Running local ambient baseline (Tap to sync GPS)')
-        .replace('Offline calibration active — using ambient fallback estimate', 'Running local ambient baseline (Tap to sync GPS)'),
-    );
+    setStatusText(normalizeStatusText(nextValues.statusText));
+    await evaluateAutoSyncAlerts(nextValues);
     setIsCalibrating(false);
   };
 
@@ -180,7 +179,7 @@ export default function IndexScreen() {
               onPress={() =>
                 Alert.alert(
                   'What this means',
-                  'Brain = the thinking system.\nMind = the feeling and steadiness underneath it.\n\nBrain Pressure = how heavy your brain feels today.\n\nBrain Stability = how steady and settled your mind feels.\n\nHeavy drag = harder to focus, think clearly, or make decisions.\n\nSmooth flow = easier thinking, clearer focus, calmer energy.',
+                  'Brain = the thinking system.\nMind = the feeling and steadiness underneath it.\n\nBrain Pressure = how heavy your brain feels today.\nBrain Stability = how steady and settled your mind feels.\n\nInputs include location + weather (temperature, humidity, barometric pressure, weather fronts) to estimate environmental drag.\n\nHeavy drag = harder to focus, think clearly, or make decisions.\nSmooth flow = easier thinking, clearer focus, calmer energy.',
                 )
               }
             >

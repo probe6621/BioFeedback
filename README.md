@@ -1,6 +1,6 @@
 # BioFeedback
 
-BioFeedback is a local-first daily wellness telemetry app built with React Native and Expo. The MVP focuses on a fast daily check-in flow that lets users log their current bio-charge tension and vector stability, review a rolling history, and generate a stylized tension card for quick reflection or social sharing.
+BioFeedback is a local-first daily wellness telemetry app built with React Native and Expo. The app focuses on a fast brain-state check-in flow that combines live environmental telemetry with simple, plain-language readouts.
 
 ## Why it exists
 
@@ -8,13 +8,18 @@ The app is designed to help users track energy, attention, and mental load in a 
 
 ## Features
 
-- Daily check-in dashboard with two live telemetry inputs
-  - Bio-Charge Tension
-  - Vector Stability
-- Dynamic vector visualization for a lightweight physics-inspired feel
+- Daily dashboard with brain-state telemetry
+  - Brain Pressure
+  - Brain Stability
+  - Combined Brain Score
+- Pro auto-sync using location + weather inputs (temperature, humidity, barometric pressure, weather fronts)
+- Pro custom alerts with configurable thresholds and toggles
+  - High Pressure threshold
+  - Low Stability threshold
+  - Morning briefing / Heavy drag warning / Flow state ready
 - Local history tracking with daily entries stored on-device
-- Share-ready tension card preview
-- Settings screen with app info, disclaimer, and Pro toggle concept
+- Share-ready check-in snapshot card
+- Settings screen with Pro toggle and alert settings
 - Built for Expo and React Native web/native development
 
 ## Project structure
@@ -28,7 +33,11 @@ app/
   _layout.tsx
 components/
   TensionCard.tsx
-  VectorSlider.tsx
+src/
+  services/
+    autoSync.ts
+    alerts.ts
+    notifications.ts
 utils/
   storage.ts
 ```
