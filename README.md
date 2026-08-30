@@ -71,6 +71,16 @@ npm start
 npm run web
 ```
 
+## Android release prep
+
+This project is configured for Android App Bundle builds with EAS:
+
+```bash
+npm run build:android
+```
+
+Before publishing to Google Play, you will still need to fill out the Play Console listing, privacy policy URL, and content rating questionnaire.
+
 ## Local storage
 
 The app persists the daily history locally using AsyncStorage. This keeps the MVP simple and private while still enabling a rolling 7-day view for the free tier experience.
