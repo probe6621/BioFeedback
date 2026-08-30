@@ -19,15 +19,15 @@ const defaultStability = 64;
 
 const normalizeStatusText = (status: string) =>
   status
-    .replace('Location permission unavailable — using fallback field calibration', 'Running local ambient baseline (Unlock Live Sync for live conditions)')
-    .replace('Connection drift detected — fallback field calibration applied', 'Running local ambient baseline (Unlock Live Sync for live conditions)')
-    .replace('Offline calibration active — using ambient fallback estimate', 'Running local ambient baseline (Unlock Live Sync for live conditions)');
+    .replace('Location permission unavailable — using fallback field calibration', 'Running local ambient baseline (Unlock Live Sync & Alerting for live conditions)')
+    .replace('Connection drift detected — fallback field calibration applied', 'Running local ambient baseline (Unlock Live Sync & Alerting for live conditions)')
+    .replace('Offline calibration active — using ambient fallback estimate', 'Running local ambient baseline (Unlock Live Sync & Alerting for live conditions)');
 
 export default function IndexScreen() {
   const [tension, setTension] = useState(defaultTension);
   const [stability, setStability] = useState(defaultStability);
   const [history, setHistory] = useState<DailyCheckIn[]>([]);
-  const [statusText, setStatusText] = useState('Running local ambient baseline (Unlock Live Sync for live conditions)');
+  const [statusText, setStatusText] = useState('Running local ambient baseline (Unlock Live Sync & Alerting for live conditions)');
   const [isCalibrating, setIsCalibrating] = useState(true);
   const [isPro, setProState] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
@@ -134,7 +134,7 @@ export default function IndexScreen() {
         <View style={styles.modalOverlay}>
           <View style={styles.modalCard}>
             <Text style={styles.modalKicker}>Pro unlock</Text>
-            <Text style={styles.modalTitle}>Unlock Real-Time Environmental Auto-Sync</Text>
+            <Text style={styles.modalTitle}>Unlock Live Sync &amp; Alerting</Text>
             <Text style={styles.modalBody}>Let GPS & barometric pressure calibrate your flow automatically for just $2/month.</Text>
             <Pressable style={styles.modalButton} onPress={handleUpgradeToPro}>
               <Text style={styles.modalButtonText}>Upgrade to Pro ($2)</Text>
@@ -171,7 +171,7 @@ export default function IndexScreen() {
               </Pressable>
             ) : (
               <Pressable style={styles.unlockButton} onPress={() => setShowUpgradeModal(true)}>
-                <Text style={styles.unlockButtonText}>Unlock Live Sync</Text>
+                <Text style={styles.unlockButtonText}>Unlock Live Sync &amp; Alerting</Text>
               </Pressable>
             )}
           </View>

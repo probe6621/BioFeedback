@@ -61,7 +61,7 @@ export default function SettingsScreen() {
         <View style={styles.modalOverlay}>
           <View style={styles.modalCard}>
             <Text style={styles.modalKicker}>Pro unlock</Text>
-            <Text style={styles.modalTitle}>Unlock Environmental Alerts &amp; Real-Time Sync</Text>
+            <Text style={styles.modalTitle}>Unlock Live Sync &amp; Alerting</Text>
             <Text style={styles.modalBody}>
               Upgrade to Pro for $2/month to customize Brain Pressure and Brain Stability alert thresholds.
             </Text>
