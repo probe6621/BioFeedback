@@ -13,6 +13,7 @@ The app is designed to help users track energy, attention, and mental load in a 
   - Brain Pressure
   - Brain Stability
   - Combined Brain Score
+- RevenueCat-backed Pro subscription with live sync and restore flow
 - Pro auto-sync using location + weather inputs (temperature, humidity, barometric pressure, weather fronts)
 - Pro custom alerts with configurable thresholds and toggles
   - High Pressure threshold
@@ -20,7 +21,7 @@ The app is designed to help users track energy, attention, and mental load in a 
   - Morning briefing / Heavy drag warning / Flow state ready
 - Local history tracking with daily entries stored on-device
 - Share-ready telemetry snapshot card
-- Settings screen with Pro toggle and alert settings
+- Settings screen with RevenueCat subscription controls and alert settings
 - Built for Expo and React Native web/native development
 
 ## Project structure
@@ -48,6 +49,7 @@ utils/
 - React Native
 - Expo
 - Expo Router
+- RevenueCat
 - TypeScript
 - AsyncStorage
 
@@ -80,6 +82,13 @@ npm run build:android
 ```
 
 Before publishing to Google Play, you will still need to fill out the Play Console listing, privacy policy URL, and content rating questionnaire.
+
+To enable subscriptions, set the RevenueCat public SDK keys in your EAS or local environment:
+
+- `EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY`
+- `EXPO_PUBLIC_REVENUECAT_IOS_API_KEY`
+- `EXPO_PUBLIC_REVENUECAT_ENTITLEMENT_ID` (defaults to `pro`)
+- `EXPO_PUBLIC_REVENUECAT_PACKAGE_ID` (optional)
 
 ## Privacy policy
 

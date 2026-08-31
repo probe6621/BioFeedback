@@ -11,7 +11,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { evaluateAutoSyncAlerts } from '../../src/services/alerts';
 import { runAutoSync } from '../../src/services/autoSync';
-import { getIsPro, setIsPro } from '../../src/services/subscription';
+import { getIsPro, purchasePro, restorePurchases } from '../../src/services/subscription';
 import { DailyCheckIn, getRecentCheckIns } from '../../utils/storage';
 
 const defaultTension = 72;
@@ -78,8 +78,8 @@ export default function IndexScreen() {
     };
   }, []);
 
-  const handleAutoSyncTrigger = async () => {
-    if (!isPro) {
+  const handleAutoSyncTrigger = async (proOverride?: boolean) => {
+    if (!(proOverride ?? isPro)) {
       setShowUpgradeModal(true);
       return;
     }
@@ -94,11 +94,33 @@ export default function IndexScreen() {
     setIsCalibrating(false);
   };
 
-  const handleUpgradeToPro = async () => {
-    const enabled = await setIsPro(true);
-    setProState(enabled);
-    setShowUpgradeModal(false);
-    await handleAutoSyncTrigger();
+  const handlePurchasePro = async () => {
+    try {
+      const enabled = await purchasePro();
+      setProState(enabled);
+      setShowUpgradeModal(false);
+      if (enabled) {
+        await handleAutoSyncTrigger(true);
+      }
+    } catch (error) {
+      Alert.alert('Purchase failed', error instanceof Error ? error.message : 'Please try again.');
+    }
+  };
+
+  const handleRestorePurchases = async () => {
+    try {
+      const enabled = await restorePurchases();
+      setProState(enabled);
+      if (enabled) {
+        setShowUpgradeModal(false);
+        await handleAutoSyncTrigger(true);
+        return;
+      }
+
+      Alert.alert('No active subscription found', 'Restore completed, but no active Pro entitlement was found.');
+    } catch (error) {
+      Alert.alert('Restore failed', error instanceof Error ? error.message : 'Please try again.');
+    }
   };
 
   const pressureState = useMemo(() => {
@@ -137,9 +159,14 @@ export default function IndexScreen() {
           <View style={styles.modalCard}>
             <Text style={styles.modalKicker}>Pro unlock</Text>
             <Text style={styles.modalTitle}>Unlock Live Sync &amp; Alerting</Text>
-            <Text style={styles.modalBody}>Let GPS & barometric pressure calibrate your flow automatically for just $2/month.</Text>
-            <Pressable style={styles.modalButton} onPress={handleUpgradeToPro}>
-              <Text style={styles.modalButtonText}>Upgrade to Pro ($2)</Text>
+            <Text style={styles.modalBody}>
+              Subscribe through Google Play to unlock live sync, alerts, and environmental calibration for about $2/month.
+            </Text>
+            <Pressable style={styles.modalButton} onPress={handlePurchasePro}>
+              <Text style={styles.modalButtonText}>Subscribe with RevenueCat</Text>
+            </Pressable>
+            <Pressable style={styles.modalSecondary} onPress={handleRestorePurchases}>
+              <Text style={styles.modalSecondaryText}>Restore purchases</Text>
             </Pressable>
             <Pressable style={styles.modalSecondary} onPress={() => setShowUpgradeModal(false)}>
               <Text style={styles.modalSecondaryText}>Maybe later</Text>

@@ -21,15 +21,17 @@ export default function PrivacyPolicyScreen() {
           <Text style={styles.sectionTitle}>What we collect</Text>
           <Text style={styles.body}>
             BrainFriction may use your location and environmental conditions (such as weather, temperature, humidity,
-            and barometric pressure) to generate your live brain-state read.
+            and barometric pressure) to generate your live brain-state read. If you subscribe, purchase and
+            entitlement information may be processed by RevenueCat and the app stores to verify access.
           </Text>
         </View>
 
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>How we use it</Text>
           <Text style={styles.body}>
-            We use this data to estimate environmental drag, power live sync, and trigger alerting when you have Pro
-            enabled. The app also stores your local history and alert preferences on your device.
+            We use this data to estimate environmental drag, power live sync, verify Pro access, and trigger alerting
+            when you have an active subscription. The app also stores your local history and alert preferences on your
+            device.
           </Text>
         </View>
 
@@ -44,8 +46,9 @@ export default function PrivacyPolicyScreen() {
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>Storage and sharing</Text>
           <Text style={styles.body}>
-            Your daily reads, Pro state, and alert settings are stored locally on the device. If you choose to share a
-            snapshot, that sharing happens only through the tools you select.
+            Your daily reads and alert settings are stored locally on the device. Subscription status is checked
+            through RevenueCat. If you choose to share a snapshot, that sharing happens only through the tools you
+            select.
           </Text>
         </View>
 

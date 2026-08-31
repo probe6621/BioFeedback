@@ -1,21 +1,12 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
 
-const SUBSCRIPTION_KEY = 'biofeedback:isPro';
+type SubscriptionModule = typeof import('./subscription.native');
 
-export async function getIsPro(): Promise<boolean> {
-  try {
-    const value = await AsyncStorage.getItem(SUBSCRIPTION_KEY);
-    return value === 'true';
-  } catch {
-    return false;
-  }
-}
+const implementation: SubscriptionModule =
+  Platform.OS === 'web'
+    ? require('./subscription.web')
+    : require('./subscription.native');
 
-export async function setIsPro(nextValue: boolean): Promise<boolean> {
-  try {
-    await AsyncStorage.setItem(SUBSCRIPTION_KEY, nextValue ? 'true' : 'false');
-    return nextValue;
-  } catch {
-    return false;
-  }
-}
+export const getIsPro = implementation.getIsPro;
+export const purchasePro = implementation.purchasePro;
+export const restorePurchases = implementation.restorePurchases;

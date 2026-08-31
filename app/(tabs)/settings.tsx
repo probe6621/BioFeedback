@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Alert, Modal, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import {
@@ -7,7 +7,7 @@ import {
   getAlertConfig,
   setAlertConfig,
 } from '../../src/services/alerts';
-import { getIsPro, setIsPro } from '../../src/services/subscription';
+import { getIsPro, purchasePro, restorePurchases } from '../../src/services/subscription';
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
@@ -36,9 +36,25 @@ export default function SettingsScreen() {
     };
   }, []);
 
-  const handleTogglePro = async (nextValue: boolean) => {
-    setProEnabled(nextValue);
-    await setIsPro(nextValue);
+  const handlePurchasePro = async () => {
+    try {
+      const enabled = await purchasePro();
+      setProEnabled(enabled);
+    } catch (error) {
+      Alert.alert('Purchase failed', error instanceof Error ? error.message : 'Please try again.');
+    }
+  };
+
+  const handleRestorePurchases = async () => {
+    try {
+      const enabled = await restorePurchases();
+      setProEnabled(enabled);
+      if (!enabled) {
+        Alert.alert('No active subscription found', 'Restore completed, but no active Pro entitlement was found.');
+      }
+    } catch (error) {
+      Alert.alert('Restore failed', error instanceof Error ? error.message : 'Please try again.');
+    }
   };
 
   const updateAlertConfig = async (nextPatch: Partial<AlertConfig>) => {
@@ -77,11 +93,18 @@ export default function SettingsScreen() {
         <Text style={styles.title}>Settings</Text>
 
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>Pro upgrade</Text>
-          <View style={styles.row}>
-            <Text style={styles.rowText}>Premium telemetry vault · $2/mo</Text>
-            <Switch value={proEnabled} onValueChange={handleTogglePro} />
-          </View>
+          <Text style={styles.cardTitle}>Pro subscription</Text>
+          <Text style={styles.bodyText}>
+            {proEnabled
+              ? 'Pro is active through RevenueCat. Restore purchases if you switch devices.'
+              : 'Subscribe to unlock live sync, alerting, and premium telemetry calibration.'}
+          </Text>
+          <Pressable style={styles.ctaButton} onPress={() => void handlePurchasePro()}>
+            <Text style={styles.ctaButtonText}>{proEnabled ? 'Refresh entitlement' : 'Subscribe with RevenueCat'}</Text>
+          </Pressable>
+          <Pressable style={[styles.ctaButton, styles.secondaryButton]} onPress={() => void handleRestorePurchases()}>
+            <Text style={styles.ctaButtonText}>Restore purchases</Text>
+          </Pressable>
         </View>
 
         <View style={styles.card}>
@@ -260,6 +283,9 @@ const styles = StyleSheet.create({
     borderColor: '#314c6f',
     alignItems: 'center',
     backgroundColor: '#111f32',
+  },
+  secondaryButton: {
+    backgroundColor: '#0d1729',
   },
   ctaButtonText: {
     color: '#edf5ff',
